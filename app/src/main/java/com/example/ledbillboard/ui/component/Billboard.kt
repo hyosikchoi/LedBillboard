@@ -7,9 +7,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
-fun BillBoard(text: String) {
+fun BillBoard(text: String, fontSize: Int) {
     Text(
         modifier = Modifier
             .fillMaxWidth()
@@ -17,5 +18,6 @@ fun BillBoard(text: String) {
             .wrapContentHeight(align = Alignment.CenterVertically),
         text = text,
         textAlign = TextAlign.Center,
+        fontSize = fontSize.sp
     )
 }
