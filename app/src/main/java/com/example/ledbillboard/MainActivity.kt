@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
 
                         var text: String by rememberSaveable { mutableStateOf("") }
 
-                        var fontSize: Int by remember { mutableStateOf(15) }
+                        var fontSize: Int by remember { mutableStateOf(100) }
 
                         BillBoard(text = text, fontSize = fontSize)
                         TextField(
