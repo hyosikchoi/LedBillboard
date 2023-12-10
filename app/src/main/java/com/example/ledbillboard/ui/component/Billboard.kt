@@ -44,11 +44,12 @@ fun BillBoard(text: String, fontSize: Int, modifier: Modifier = Modifier) {
         )
     )
 
-    val dynamicModifier = if(textWidth >= screenWidthPx) {
+    val dynamicModifier = if(textWidth > screenWidthPx) {
         modifier.basicMarquee(iterations = Int.MAX_VALUE, animationMode = MarqueeAnimationMode.Immediately, delayMillis = 0, velocity = 100.dp)
 
     } else {
         modifier
+            .fillMaxWidth()
             .horizontalScroll(state = ScrollState(0), enabled = false)
             .offset(x = Dp(500 * scroll))
     }
