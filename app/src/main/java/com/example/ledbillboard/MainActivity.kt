@@ -41,6 +41,9 @@ class MainActivity : ComponentActivity() {
                             value = text,
                             onValueChange = { newText -> text = newText },
                             modifier = Modifier.fillMaxWidth()
+                            ,
+                            maxLines = 1,
+                            singleLine = true
                         )
                         Row(
                             modifier = Modifier
@@ -50,10 +53,10 @@ class MainActivity : ComponentActivity() {
                             ,
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
-                            Button(onClick = { fontSize++ }) {
+                            Button(onClick = { fontSize += 2 }) {
                                 Text(text = "+", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
-                            Button(onClick = { fontSize-- }) {
+                            Button(onClick = { fontSize -= 2 }) {
                                 Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
                         }
