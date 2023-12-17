@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ledbillboard.enum.Direction
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +37,10 @@ class MainActivity : ComponentActivity() {
 
                         var fontSize: Int by remember { mutableStateOf(100) }
 
-                        BillBoard(text = text, fontSize = fontSize)
+                        var direction: Direction by remember { mutableStateOf(Direction.STOP) }
+
+
+                        BillBoard(text = text, fontSize = fontSize, direction = direction)
                         TextField(
                             value = text,
                             onValueChange = { newText -> text = newText },
@@ -58,6 +62,22 @@ class MainActivity : ComponentActivity() {
                             }
                             Button(onClick = { fontSize -= 2 }) {
                                 Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
+                            }
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(120.dp)
+                                .padding(top = 20.dp)
+                            ,
+                            horizontalArrangement = Arrangement.SpaceAround
+                        ) {
+                            Button(onClick = { direction = Direction.LEFT }) {
+                                Text(text = "<-", textAlign = TextAlign.Center, fontSize = 25.sp)
+                            }
+                            Button(onClick = { direction = Direction.STOP }) {
+                                Text(text = "STOP", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
                         }
                     }

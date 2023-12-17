@@ -1,6 +1,5 @@
 package com.example.ledbillboard.ui.component
 
-import android.content.res.Configuration
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -11,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
@@ -20,14 +18,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.ledbillboard.enum.Direction
 import com.example.ledbillboard.ui.theme.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BillBoard(text: String, fontSize: Int, modifier: Modifier = Modifier) {
+fun BillBoard(
+    text: String,
+    fontSize: Int,
+    direction: Direction,
+    modifier: Modifier = Modifier
+) {
     val configuration = LocalConfiguration.current
     val screenWidthDp: Dp = configuration.screenWidthDp.dp
     val screenWidthPx = with(LocalDensity.current) { screenWidthDp.toPx() }
@@ -44,14 +45,35 @@ fun BillBoard(text: String, fontSize: Int, modifier: Modifier = Modifier) {
         )
     )
 
-    val dynamicModifier = if(textWidth > screenWidthPx) {
-        modifier.basicMarquee(iterations = Int.MAX_VALUE, animationMode = MarqueeAnimationMode.Immediately, delayMillis = 0, velocity = 100.dp)
+    val dynamicModifier = when(direction) {
+       Direction.LEFT -> {
+            if (textWidth > screenWidthPx) {
+                modifier.basicMarquee(
+                    iterations = Int.MAX_VALUE,
+                    animationMode = MarqueeAnimationMode.Immediately,
+                    delayMillis = 0,
+                    velocity = 100.dp
+                )
 
-    } else {
-        modifier
-            .fillMaxWidth()
-            .horizontalScroll(state = ScrollState(0), enabled = false)
-            .offset(x = Dp(500 * scroll))
+            } else {
+                modifier
+                    .fillMaxWidth()
+                    .horizontalScroll(state = ScrollState(0), enabled = false)
+                    .offset(x = Dp(500 * scroll))
+            }
+        }
+
+       Direction.STOP -> {
+            modifier
+                .fillMaxWidth()
+                .horizontalScroll(state = ScrollState(0), enabled = true)
+        }
+
+       Direction.RIGHT -> {
+            modifier
+                .fillMaxWidth()
+                .horizontalScroll(state = ScrollState(0), enabled = true)
+        }
     }
 
     Column(
