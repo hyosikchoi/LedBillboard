@@ -14,10 +14,13 @@ import androidx.compose.ui.Modifier
 import com.example.ledbillboard.ui.component.BillBoard
 import com.example.ledbillboard.ui.theme.LedBillboardTheme
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ledbillboard.enum.Direction
+import com.example.ledbillboard.enum.ToastType
+import com.example.ledbillboard.extension.toast
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,10 +68,16 @@ class MainActivity : ComponentActivity() {
                             ,
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
-                            Button(onClick = { if(fontSize <= maxFontSize) fontSize += 2 }) {
+                            Button(onClick = {
+                                if(fontSize <= maxFontSize) fontSize += 2
+                                else this@MainActivity.toast("최대 사이즈 입니다.", ToastType.SHORT)
+                            }) {
                                 Text(text = "+", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
-                            Button(onClick = { if(fontSize >= minFontSize) fontSize -= 2 }) {
+                            Button(onClick = {
+                                if(fontSize >= minFontSize) fontSize -= 2
+                                else this@MainActivity.toast("최소 사이즈 입니다.", ToastType.SHORT)
+                            }) {
                                 Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
                         }
