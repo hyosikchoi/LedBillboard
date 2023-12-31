@@ -3,6 +3,7 @@ package com.example.ledbillboard
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.getValue
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import com.example.ledbillboard.ui.component.BillBoard
 import com.example.ledbillboard.ui.theme.LedBillboardTheme
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -64,9 +66,9 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(120.dp)
-                                .padding(top = 20.dp)
                             ,
-                            horizontalArrangement = Arrangement.SpaceAround
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Button(onClick = {
                                 if(fontSize <= maxFontSize) fontSize += 2
@@ -85,19 +87,19 @@ class MainActivity : ComponentActivity() {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(120.dp)
-                                .padding(top = 20.dp)
+                                .height(100.dp)
                             ,
-                            horizontalArrangement = Arrangement.SpaceAround
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Button(onClick = { direction = Direction.LEFT }) {
-                                Text(text = "<-", textAlign = TextAlign.Center, fontSize = 25.sp)
+                                Text(text = "←", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
                             Button(onClick = { direction = Direction.STOP }) {
                                 Text(text = "STOP", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
                             Button(onClick = { direction = Direction.RIGHT }) {
-                                Text(text = "->", textAlign = TextAlign.Center, fontSize = 25.sp)
+                                Text(text = "→", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
 
                         }
