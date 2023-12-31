@@ -1,5 +1,6 @@
 package com.example.ledbillboard.ui.component
 
+import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -10,10 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -21,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import com.example.ledbillboard.enum.Direction
 import com.example.ledbillboard.ui.theme.*
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BillBoard(
     text: String,
@@ -29,11 +31,10 @@ fun BillBoard(
     direction: Direction,
     modifier: Modifier = Modifier
 ) {
-    val configuration = LocalConfiguration.current
-    val screenWidthDp: Dp = configuration.screenWidthDp.dp
-    val screenWidthPx = with(LocalDensity.current) { screenWidthDp.toPx() }
-    var textWidth: Int by remember { mutableStateOf(0) }
-
+//    val configuration = LocalConfiguration.current
+//    val screenWidthDp: Dp = configuration.screenWidthDp.dp
+//    val screenWidthPx = with(LocalDensity.current) { screenWidthDp.toPx() }
+    var textWidth: Int by remember { mutableStateOf(1) }
 
     val infiniteTransition = rememberInfiniteTransition()
     val scroll by infiniteTransition.animateFloat(
@@ -47,32 +48,29 @@ fun BillBoard(
 
     val dynamicModifier = when(direction) {
        Direction.LEFT -> {
-            if (textWidth > screenWidthPx) {
-                modifier.basicMarquee(
-                    iterations = Int.MAX_VALUE,
-                    animationMode = MarqueeAnimationMode.Immediately,
-                    delayMillis = 0,
-                    velocity = 100.dp
-                )
-
-            } else {
-                modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(state = ScrollState(0), enabled = false)
-                    .offset(x = Dp(500 * scroll))
-            }
+           modifier
+               .fillMaxWidth()
+               .horizontalScroll(state = ScrollState(0), enabled = false)
+               .graphicsLayer(
+                   translationX = (textWidth * scroll),
+                   translationY = 0f
+               )
         }
 
        Direction.STOP -> {
-            modifier
-                .fillMaxWidth()
-                .horizontalScroll(state = ScrollState(0), enabled = true)
+           modifier
+               .fillMaxWidth()
+               .horizontalScroll(state = ScrollState(0), enabled = true)
         }
 
        Direction.RIGHT -> {
-            modifier
-                .fillMaxWidth()
-                .horizontalScroll(state = ScrollState(0), enabled = true)
+           modifier
+               .fillMaxWidth()
+               .horizontalScroll(state = ScrollState(0), enabled = false)
+               .graphicsLayer(
+                   translationX = -textWidth * scroll,
+                   translationY = 0f
+               )
         }
     }
 
@@ -101,7 +99,7 @@ fun BillBoard(
             textAlign = TextAlign.Center,
             fontSize = fontSize.sp,
             color = Yellow700,
-            maxLines = 1
+            maxLines = 1,
         )
     }
 

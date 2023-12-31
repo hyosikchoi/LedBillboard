@@ -39,14 +39,22 @@ class MainActivity : ComponentActivity() {
 
                         var direction: Direction by remember { mutableStateOf(Direction.STOP) }
 
+                        val maxChar: Int = 30
+
+                        val minFontSize: Int = 60
+
+                        val maxFontSize: Int = 140
 
                         BillBoard(text = text, fontSize = fontSize, direction = direction)
                         TextField(
                             value = text,
-                            onValueChange = { newText -> text = newText },
+                            onValueChange = { newText ->
+                                if(newText.length <= maxChar) text = newText
+                            },
                             modifier = Modifier.fillMaxWidth()
                             ,
                             maxLines = 1,
+
                             singleLine = true
                         )
                         Row(
@@ -57,10 +65,10 @@ class MainActivity : ComponentActivity() {
                             ,
                             horizontalArrangement = Arrangement.SpaceAround
                         ) {
-                            Button(onClick = { fontSize += 2 }) {
+                            Button(onClick = { if(fontSize <= maxFontSize) fontSize += 2 }) {
                                 Text(text = "+", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
-                            Button(onClick = { fontSize -= 2 }) {
+                            Button(onClick = { if(fontSize >= minFontSize) fontSize -= 2 }) {
                                 Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
                         }
@@ -79,6 +87,10 @@ class MainActivity : ComponentActivity() {
                             Button(onClick = { direction = Direction.STOP }) {
                                 Text(text = "STOP", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
+                            Button(onClick = { direction = Direction.RIGHT }) {
+                                Text(text = "->", textAlign = TextAlign.Center, fontSize = 25.sp)
+                            }
+
                         }
                     }
                 }
