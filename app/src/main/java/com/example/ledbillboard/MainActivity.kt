@@ -1,9 +1,13 @@
 package com.example.ledbillboard
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.getValue
@@ -16,6 +20,8 @@ import com.example.ledbillboard.ui.component.BillBoard
 import com.example.ledbillboard.ui.theme.LedBillboardTheme
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,7 +56,25 @@ class MainActivity : ComponentActivity() {
 
                         val maxFontSize: Int = 140
 
-                        BillBoard(text = text, fontSize = fontSize, direction = direction)
+                        var billboardTextWidth: Int by remember { mutableStateOf(1) }
+
+                        val infiniteTransition = rememberInfiniteTransition()
+
+                        /** scroll 값은 지속적으로 변하므로 리컴포지션 조심! */
+                        val scroll by infiniteTransition.animateFloat(
+                            initialValue = 1f,
+                            targetValue = -1f,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(10000, easing = LinearEasing),
+                                repeatMode = RepeatMode.Restart,
+                            )
+                        )
+                        /** scroll 값 때문에 리컴포지션 방지하기 위해 scrollProvider 람다식으로 변경! */
+                        val dynamicModifier = getModifier(direction = direction, billboardTextWidth = billboardTextWidth, scrollProvider = { scroll })
+
+                        BillBoard(text = text, fontSize = fontSize, textWidth = { textWidth ->
+                            if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
+                        }, dynamicModifier = dynamicModifier)
                         TextField(
                             value = text,
                             onValueChange = { newText ->
@@ -108,5 +132,34 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    private fun getModifier(direction: Direction, billboardTextWidth: Int, scrollProvider: () -> Float): Modifier = when(direction) {
+        Direction.LEFT -> {
+            Modifier
+                .fillMaxWidth()
+                .horizontalScroll(state = ScrollState(0), enabled = false)
+                .graphicsLayer(
+                    translationX = (billboardTextWidth * scrollProvider()),
+                    translationY = 0f
+                )
+        }
+
+        Direction.STOP -> {
+            Modifier
+                .fillMaxWidth()
+                .horizontalScroll(state = ScrollState(0), enabled = true)
+        }
+
+        Direction.RIGHT -> {
+            Modifier
+                .fillMaxWidth()
+                .horizontalScroll(state = ScrollState(0), enabled = false)
+                .graphicsLayer(
+                    translationX = -billboardTextWidth * scrollProvider(),
+                    translationY = 0f
+                )
+        }
+    }
+
 }
 

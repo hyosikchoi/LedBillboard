@@ -28,51 +28,12 @@ import com.example.ledbillboard.ui.theme.*
 fun BillBoard(
     text: String,
     fontSize: Int,
-    direction: Direction,
-    modifier: Modifier = Modifier
+    textWidth: (Int) -> Unit,
+    dynamicModifier: Modifier
 ) {
 //    val configuration = LocalConfiguration.current
 //    val screenWidthDp: Dp = configuration.screenWidthDp.dp
 //    val screenWidthPx = with(LocalDensity.current) { screenWidthDp.toPx() }
-    var textWidth: Int by remember { mutableStateOf(1) }
-
-    val infiniteTransition = rememberInfiniteTransition()
-    val scroll by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = -1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(10000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
-        )
-    )
-
-    val dynamicModifier = when(direction) {
-       Direction.LEFT -> {
-           modifier
-               .fillMaxWidth()
-               .horizontalScroll(state = ScrollState(0), enabled = false)
-               .graphicsLayer(
-                   translationX = (textWidth * scroll),
-                   translationY = 0f
-               )
-        }
-
-       Direction.STOP -> {
-           modifier
-               .fillMaxWidth()
-               .horizontalScroll(state = ScrollState(0), enabled = true)
-        }
-
-       Direction.RIGHT -> {
-           modifier
-               .fillMaxWidth()
-               .horizontalScroll(state = ScrollState(0), enabled = false)
-               .graphicsLayer(
-                   translationX = -textWidth * scroll,
-                   translationY = 0f
-               )
-        }
-    }
 
     Column(
         modifier = Modifier
@@ -86,7 +47,7 @@ fun BillBoard(
         Text(
             text = text,
             modifier = dynamicModifier.onGloballyPositioned { layoutCoordinates ->
-                textWidth = layoutCoordinates.size.width
+                textWidth(layoutCoordinates.size.width)
             },
             overflow = TextOverflow.Visible,
             style = MaterialTheme.typography.h4.copy(
