@@ -10,6 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -29,6 +30,7 @@ fun BillBoard(
     text: String,
     fontSize: Int,
     textWidth: (Int) -> Unit,
+    textColor: String,
     dynamicModifier: Modifier
 ) {
 //    val configuration = LocalConfiguration.current
@@ -52,14 +54,14 @@ fun BillBoard(
             overflow = TextOverflow.Visible,
             style = MaterialTheme.typography.h4.copy(
                 shadow = Shadow(
-                    color = Yellow700,
+                    color = Color(android.graphics.Color.parseColor("#${textColor}")),
                     offset = Offset(4f, 2f),
                     blurRadius = 50f
                 )
             ),
             textAlign = TextAlign.Center,
             fontSize = fontSize.sp,
-            color = Yellow700,
+            color = Color(android.graphics.Color.parseColor("#${textColor}")),
             maxLines = 1,
         )
     }

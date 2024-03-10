@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'com.example.ledbillboard'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.ledbillboard"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -65,5 +65,8 @@ dependencies {
 
     // basicMarquee 메서드가 포함 kotlin version 1.8.10 에서 호환가능
     implementation 'androidx.compose.foundation:foundation:1.4.0-beta02'
+
+    // color picker
+    implementation("com.github.skydoves:colorpicker-compose:1.0.7")
 
 }

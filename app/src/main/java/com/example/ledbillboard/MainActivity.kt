@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.sp
 import com.example.ledbillboard.enum.Direction
 import com.example.ledbillboard.enum.ToastType
 import com.example.ledbillboard.extension.toast
+import com.github.skydoves.colorpicker.compose.ColorEnvelope
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +52,10 @@ class MainActivity : ComponentActivity() {
                         var fontSize: Int by remember { mutableStateOf(100) }
 
                         var direction: Direction by remember { mutableStateOf(Direction.STOP) }
+
+                        val controller = rememberColorPickerController()
+
+                        var textColor: String by remember { mutableStateOf("FFFFFFFF") }
 
                         val maxChar: Int = 30
 
@@ -74,23 +81,23 @@ class MainActivity : ComponentActivity() {
 
                         BillBoard(text = text, fontSize = fontSize, textWidth = { textWidth ->
                             if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
-                        }, dynamicModifier = dynamicModifier)
-                        TextField(
+                        },
+                        textColor = textColor,
+                        dynamicModifier = dynamicModifier
+                        )
+                        OutlinedTextField(
                             value = text,
                             onValueChange = { newText ->
                                 if(newText.length <= maxChar) text = newText
                             },
-                            modifier = Modifier.fillMaxWidth()
-                            ,
+                            modifier = Modifier.fillMaxWidth(),
                             maxLines = 1,
-
                             singleLine = true
                         )
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(120.dp)
-                            ,
+                                .height(120.dp),
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -125,8 +132,22 @@ class MainActivity : ComponentActivity() {
                             Button(onClick = { direction = Direction.RIGHT }) {
                                 Text(text = "→", textAlign = TextAlign.Center, fontSize = 25.sp)
                             }
-
                         }
+
+                        HsvColorPicker(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(350.dp)
+                                .padding(10.dp),
+                            controller = controller,
+                            onColorChanged = { colorEnvelope: ColorEnvelope ->
+                                // do something
+                                if(colorEnvelope.hexCode != textColor) {
+                                    textColor = colorEnvelope.hexCode
+                                }
+                            }
+                        )
+
                     }
                 }
             }
