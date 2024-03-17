@@ -1,5 +1,6 @@
 package com.example.ledbillboard.ui.component
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -31,7 +32,7 @@ fun BillBoard(
     fontSize: Int,
     textWidth: (Int) -> Unit,
     textColor: String,
-    dynamicModifier: Modifier
+    dynamicModifier: Modifier,
 ) {
 //    val configuration = LocalConfiguration.current
 //    val screenWidthDp: Dp = configuration.screenWidthDp.dp
@@ -39,8 +40,7 @@ fun BillBoard(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(250.dp)
+            .fillMaxSize()
             .background(color = Black500),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

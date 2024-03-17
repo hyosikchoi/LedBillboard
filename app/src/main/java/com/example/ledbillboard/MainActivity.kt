@@ -35,6 +35,11 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 
 class MainActivity : ComponentActivity() {
+
+    /** orientation 변경 시 HsvColorPicker 에서 OnColorChanged 가 계속 호출 되므로  */
+    /** TextColor 가 흰색으로 초기화 되는거 방지용 변수 */
+    private var isBackKeyPressed: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -45,6 +50,7 @@ class MainActivity : ComponentActivity() {
                 if(this@MainActivity.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                     finish()
                 } else {
+                    isBackKeyPressed = true
                     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
                 }
             }
@@ -59,6 +65,39 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
 
+                    var text: String by rememberSaveable { mutableStateOf("") }
+
+                    var fontSize: Int by rememberSaveable { mutableStateOf(100) }
+
+                    var direction: Direction by rememberSaveable { mutableStateOf(Direction.STOP) }
+
+                    val controller = rememberColorPickerController()
+
+                    var textColor: String by rememberSaveable { mutableStateOf("FFFFFFFF") }
+
+                    val maxChar: Int = 30
+
+                    val minFontSize: Int = 60
+
+                    val maxFontSize: Int = 140
+
+                    var billboardTextWidth: Int by rememberSaveable { mutableStateOf(1) }
+
+                    val infiniteTransition = rememberInfiniteTransition()
+
+                    /** scroll 값은 지속적으로 변하므로 리컴포지션 조심! */
+                    val scroll by infiniteTransition.animateFloat(
+                        initialValue = 1f,
+                        targetValue = -1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(10000, easing = LinearEasing),
+                            repeatMode = RepeatMode.Restart,
+                        )
+                    )
+
+                    /** scroll 값 때문에 리컴포지션 방지하기 위해 scrollProvider 람다식으로 변경! */
+                    val dynamicModifier = getModifier(direction = direction, billboardTextWidth = billboardTextWidth, scrollProvider = { scroll })
+
                     var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
 
                     val configuration = LocalConfiguration.current
@@ -72,59 +111,37 @@ class MainActivity : ComponentActivity() {
 
                     when (orientation) {
                         Configuration.ORIENTATION_LANDSCAPE -> {
-                            //TODO 전체화면 시 처리
+                            //TODO Landscape Screen 따로 생성
                             Column(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(color = Color.White)
                             ) {
-                                Text(text = "가로화면")
-                            }
-                        }
-                        else -> {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-
-                                var text: String by rememberSaveable { mutableStateOf("") }
-
-                                var fontSize: Int by remember { mutableStateOf(100) }
-
-                                var direction: Direction by remember { mutableStateOf(Direction.STOP) }
-
-                                val controller = rememberColorPickerController()
-
-                                var textColor: String by remember { mutableStateOf("FFFFFFFF") }
-
-                                val maxChar: Int = 30
-
-                                val minFontSize: Int = 60
-
-                                val maxFontSize: Int = 140
-
-                                var billboardTextWidth: Int by remember { mutableStateOf(1) }
-
-                                val infiniteTransition = rememberInfiniteTransition()
-
-                                /** scroll 값은 지속적으로 변하므로 리컴포지션 조심! */
-                                val scroll by infiniteTransition.animateFloat(
-                                    initialValue = 1f,
-                                    targetValue = -1f,
-                                    animationSpec = infiniteRepeatable(
-                                        animation = tween(10000, easing = LinearEasing),
-                                        repeatMode = RepeatMode.Restart,
-                                    )
-                                )
-                                /** scroll 값 때문에 리컴포지션 방지하기 위해 scrollProvider 람다식으로 변경! */
-                                val dynamicModifier = getModifier(direction = direction, billboardTextWidth = billboardTextWidth, scrollProvider = { scroll })
-
                                 BillBoard(text = text, fontSize = fontSize, textWidth = { textWidth ->
                                     if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
                                 },
                                     textColor = textColor,
                                     dynamicModifier = dynamicModifier
                                 )
+                            }
+                        }
+                        else -> {
+                            //TODO Portrait Screen 따로 생성
+                            Column(
+                                modifier = Modifier.fillMaxSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+
+                                Column(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .height(250.dp)
+                                ) {
+                                    BillBoard(text = text, fontSize = fontSize, textWidth = { textWidth ->
+                                        if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
+                                    },
+                                        textColor = textColor,
+                                        dynamicModifier = dynamicModifier
+                                    )
+                                }
                                 OutlinedTextField(
                                     value = text,
                                     onValueChange = { newText ->
@@ -188,14 +205,16 @@ class MainActivity : ComponentActivity() {
                                         .padding(10.dp),
                                     controller = controller,
                                     onColorChanged = { colorEnvelope: ColorEnvelope ->
-                                        // do something
-                                        if(colorEnvelope.hexCode != textColor) {
-                                            textColor = colorEnvelope.hexCode
+                                        if(isBackKeyPressed.not()) {
+                                            if(colorEnvelope.hexCode != textColor) {
+                                                textColor = colorEnvelope.hexCode
+                                            }
+                                        } else {
+                                           isBackKeyPressed = false
                                         }
-                                    }
+                                    },
                                 )
-
-                            }          
+                            }
                         }
                     }
                 }
