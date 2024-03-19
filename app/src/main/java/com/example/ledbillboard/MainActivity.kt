@@ -3,36 +3,26 @@ package com.example.ledbillboard
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.example.ledbillboard.ui.component.BillBoard
 import com.example.ledbillboard.ui.theme.LedBillboardTheme
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.ledbillboard.enum.Direction
 import com.example.ledbillboard.enum.ToastType
 import com.example.ledbillboard.extension.toast
+import com.example.ledbillboard.ui.screen.LandScapeScreen
+import com.example.ledbillboard.ui.screen.PotraitScreen
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
-import com.github.skydoves.colorpicker.compose.HsvColorPicker
-import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 
 class MainActivity : ComponentActivity() {
 
@@ -71,19 +61,17 @@ class MainActivity : ComponentActivity() {
 
                     var direction: Direction by rememberSaveable { mutableStateOf(Direction.STOP) }
 
-                    val controller = rememberColorPickerController()
-
                     var textColor: String by rememberSaveable { mutableStateOf("FFFFFFFF") }
+
+                    var billboardTextWidth: Int by rememberSaveable { mutableStateOf(1) }
+
+                    val infiniteTransition = rememberInfiniteTransition()
 
                     val maxChar: Int = 30
 
                     val minFontSize: Int = 60
 
                     val maxFontSize: Int = 140
-
-                    var billboardTextWidth: Int by rememberSaveable { mutableStateOf(1) }
-
-                    val infiniteTransition = rememberInfiniteTransition()
 
                     /** scroll 값은 지속적으로 변하므로 리컴포지션 조심! */
                     val scroll by infiniteTransition.animateFloat(
@@ -111,110 +99,52 @@ class MainActivity : ComponentActivity() {
 
                     when (orientation) {
                         Configuration.ORIENTATION_LANDSCAPE -> {
-                            //TODO Landscape Screen 따로 생성
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                            ) {
-                                BillBoard(text = text, fontSize = fontSize, textWidth = { textWidth ->
+                            LandScapeScreen(
+                                text = text,
+                                fontSize = fontSize,
+                                textColor = textColor,
+                                dynamicModifier = dynamicModifier,
+                                textWidthProvider = { textWidth ->
                                     if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
-                                },
-                                    textColor = textColor,
-                                    dynamicModifier = dynamicModifier
-                                )
-                            }
+                                }
+                            )
                         }
                         else -> {
-                            //TODO Portrait Screen 따로 생성
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-
-                                Column(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .height(250.dp)
-                                ) {
-                                    BillBoard(text = text, fontSize = fontSize, textWidth = { textWidth ->
-                                        if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
-                                    },
-                                        textColor = textColor,
-                                        dynamicModifier = dynamicModifier
-                                    )
-                                }
-                                OutlinedTextField(
-                                    value = text,
-                                    onValueChange = { newText ->
-                                        if(newText.length <= maxChar) text = newText
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    maxLines = 1,
-                                    singleLine = true
-                                )
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(120.dp),
-                                    horizontalArrangement = Arrangement.SpaceEvenly,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Button(onClick = {
-                                        if(fontSize <= maxFontSize) fontSize += 2
-                                        else this@MainActivity.toast("최대 사이즈 입니다.", ToastType.SHORT)
-                                    }) {
-                                        Text(text = "+", textAlign = TextAlign.Center, fontSize = 25.sp)
-                                    }
-                                    
-                                    Button(onClick = {
-                                        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-                                    }) {
-                                        Text(text = "START", textAlign = TextAlign.Center, fontSize = 25.sp)
-                                    }
-                                    
-                                    Button(onClick = {
-                                        if(fontSize >= minFontSize) fontSize -= 2
-                                        else this@MainActivity.toast("최소 사이즈 입니다.", ToastType.SHORT)
-                                    }) {
-                                        Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
-                                    }
-                                }
-
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(100.dp)
-                                    ,
-                                    horizontalArrangement = Arrangement.SpaceEvenly,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Button(onClick = { direction = Direction.LEFT }) {
-                                        Text(text = "←", textAlign = TextAlign.Center, fontSize = 25.sp)
-                                    }
-                                    Button(onClick = { direction = Direction.STOP }) {
-                                        Text(text = "STOP", textAlign = TextAlign.Center, fontSize = 25.sp)
-                                    }
-                                    Button(onClick = { direction = Direction.RIGHT }) {
-                                        Text(text = "→", textAlign = TextAlign.Center, fontSize = 25.sp)
-                                    }
-                                }
-
-                                HsvColorPicker(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(350.dp)
-                                        .padding(10.dp),
-                                    controller = controller,
-                                    onColorChanged = { colorEnvelope: ColorEnvelope ->
-                                        if(isBackKeyPressed.not()) {
-                                            if(colorEnvelope.hexCode != textColor) {
-                                                textColor = colorEnvelope.hexCode
-                                            }
-                                        } else {
-                                           isBackKeyPressed = false
+                            PotraitScreen(
+                                text = text,
+                                fontSize = fontSize,
+                                textColor = textColor,
+                                dynamicModifier = dynamicModifier,
+                                textWidthProvider = { textWidth ->
+                                    if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
+                                },
+                                onValueChange = {newText ->
+                                    if(newText.length <= maxChar) text = newText
+                                },
+                                fontSizeUp = {
+                                    if(fontSize <= maxFontSize) fontSize += 2
+                                    else this@MainActivity.toast("최대 사이즈 입니다.", ToastType.SHORT)
+                                },
+                                fontSizeDown = {
+                                    if(fontSize >= minFontSize) fontSize -= 2
+                                    else this@MainActivity.toast("최소 사이즈 입니다.", ToastType.SHORT)
+                                },
+                                requestOrientationProvider = {
+                                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                                },
+                                directionProvider = { changeDirection: Direction ->
+                                    direction = changeDirection
+                                },
+                                onColorChanged = { colorEnvelope: ColorEnvelope ->
+                                    if (isBackKeyPressed.not()) {
+                                        if (colorEnvelope.hexCode != textColor) {
+                                            textColor = colorEnvelope.hexCode
                                         }
-                                    },
-                                )
-                            }
+                                    } else {
+                                        isBackKeyPressed = false
+                                    }
+                                }
+                            )
                         }
                     }
                 }
