@@ -14,6 +14,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.example.ledbillboard.ui.theme.LedBillboardTheme
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
@@ -22,7 +23,9 @@ import com.example.ledbillboard.enum.ToastType
 import com.example.ledbillboard.extension.toast
 import com.example.ledbillboard.ui.screen.LandScapeScreen
 import com.example.ledbillboard.ui.screen.PotraitScreen
+import com.example.ledbillboard.ui.theme.Black500
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 class MainActivity : ComponentActivity() {
 
