@@ -1,7 +1,8 @@
-@file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     `kotlin-dsl`
 }
+
+group = "com.example.ledbillboard.buildlogic"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_11
@@ -9,7 +10,20 @@ java {
 }
 
 dependencies {
-    compileOnly(libs.android.gradle.plugin)
-    compileOnly(libs.kotlin.gradle.plugin)
-    compileOnly(libs.ksp.gradle.plugin)
+    compileOnly(libs.android.gradlePlugin)
+    compileOnly(libs.kotlin.gradlePlugin)
+//    compileOnly(libs.ksp.gradlePlugin)
+}
+
+gradlePlugin {
+    plugins {
+        register("AndroidApplicationPlugin") {
+            id = "hyosik.plugin.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
+        }
+        register("AndroidApplicationComposePlugin") {
+            id = "hyosik.plugin.application.compose"
+            implementationClass = "AndroidApplicationComposeConventionPlugin"
+        }
+    }
 }

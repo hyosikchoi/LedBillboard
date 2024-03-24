@@ -2,6 +2,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
 
     versionCatalogs {
@@ -10,7 +11,6 @@ dependencyResolutionManagement {
         }
     }
 }
-
 
 rootProject.name = "build-logic"
 include(":convention")

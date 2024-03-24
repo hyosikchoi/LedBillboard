@@ -1,7 +1,6 @@
-@file:Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
+    id("hyosik.plugin.application")
+    id("hyosik.plugin.application.compose")
 }
 
 apply {
@@ -13,7 +12,6 @@ dependencies {
     implementation (libs.androidX.core.ktx)
     implementation (libs.androidX.lifecycle.runtimeTesting)
     implementation (libs.androidX.activity.compose)
-    implementation(libs.bundles.androidX.compose)
     testImplementation (libs.junit)
     androidTestImplementation (libs.androidX.test.junit)
     androidTestImplementation (libs.androidX.test.espresso)
@@ -28,3 +26,7 @@ dependencies {
     implementation (libs.accompanist.system.uicontroller)
 
 }
+
+//kapt {
+//    useBuildCache = true
+//}
