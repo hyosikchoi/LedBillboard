@@ -11,6 +11,8 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -55,7 +57,7 @@ class MainActivity : ComponentActivity() {
             LedBillboardTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    color = MaterialTheme.colorScheme.background
                 ) {
 
                     var text: String by rememberSaveable { mutableStateOf("") }
@@ -121,7 +123,7 @@ class MainActivity : ComponentActivity() {
                                 textWidthProvider = { textWidth ->
                                     if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
                                 },
-                                onValueChange = {newText ->
+                                onValueChange = { newText ->
                                     if(newText.length <= maxChar) text = newText
                                 },
                                 fontSizeUp = {
