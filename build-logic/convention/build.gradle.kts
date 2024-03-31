@@ -12,7 +12,7 @@ java {
 dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
-//    compileOnly(libs.ksp.gradlePlugin)
+    compileOnly(libs.ksp.gradlePlugin)
 }
 
 gradlePlugin {
@@ -24,6 +24,10 @@ gradlePlugin {
         register("AndroidApplicationComposePlugin") {
             id = "hyosik.plugin.application.compose"
             implementationClass = "AndroidApplicationComposeConventionPlugin"
+        }
+        register("AndroidHiltPlugin") {
+            id = "hyosik.plugin.hilt"
+            implementationClass = "AndroidHiltConventionPlugin"
         }
     }
 }

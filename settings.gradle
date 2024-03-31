@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("build-logic")
+    includeBuild("build-logic") // 필수
     repositories {
         google()
         mavenCentral()

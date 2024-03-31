@@ -1,6 +1,7 @@
 plugins {
     id("hyosik.plugin.application")
     id("hyosik.plugin.application.compose")
+    id("hyosik.plugin.hilt")
 }
 
 apply {
