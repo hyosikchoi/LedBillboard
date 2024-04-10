@@ -4,11 +4,13 @@ plugins {
     id("hyosik.plugin.hilt")
 }
 
-apply {
-    from(rootProject.file("android.gradle"))
+android {
+    namespace = "com.example.ledbillboard"
 }
 
 dependencies {
+
+    implementation (project(":data"))
 
     implementation (libs.androidX.core.ktx)
     implementation (libs.androidX.lifecycle.runtimeTesting)
@@ -28,6 +30,3 @@ dependencies {
 
 }
 
-//kapt {
-//    useBuildCache = true
-//}

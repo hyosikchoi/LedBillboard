@@ -1,4 +1,4 @@
-package com.hyosik.convention
+package com.hyosik.data
 
 import org.junit.Test
 

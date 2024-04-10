@@ -1,22 +1,22 @@
 [versions]
-androidStudioGradlePlugin = "7.4.2"
+androidStudioGradlePlugin = "8.1.1"
 
 # AndroiX
-activity = "1.3.1"
+activity = "1.6.1"
 compose = "1.5.0-alpha03"
 compose-material3 = "1.1.0-alpha04"
 #compose-bom = "2024.03.00"
-composeCompiler = "1.5.11"
-lifecycle = "2.3.1"
+composeCompiler = "1.5.3"
+lifecycle = "2.6.1"
 room = "2.6.1"
 paging = "3.2.1"
 
 # 3rd-party
 coil = "2.6.0"
-dagger = "2.44"
+dagger = "2.48"
 accompanist = "0.27.0"
-kotlin = "1.8.10"
-ksp = "1.6.10-1.0.2"
+kotlin = "1.9.10"
+ksp = "1.9.10-1.0.13"
 kotlin-coroutine = "1.8.0"
 okhttp = "4.12.0"
 

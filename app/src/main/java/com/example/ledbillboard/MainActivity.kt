@@ -28,6 +28,7 @@ import com.example.ledbillboard.ui.screen.PotraitScreen
 import com.example.ledbillboard.ui.theme.Black500
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dagger.hilt.android.AndroidEntryPoint
 
 class MainActivity : ComponentActivity() {
 
