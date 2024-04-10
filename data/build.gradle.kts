@@ -1,6 +1,5 @@
 plugins {
     id("hyosik.plugin.library")
-
 }
 
 android {
@@ -8,6 +7,9 @@ android {
 }
 
 dependencies {
+
+    implementation (project(":domain"))
+
     implementation (libs.kotlin.coroutine.core)
     testImplementation(libs.junit)
 }
