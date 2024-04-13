@@ -6,7 +6,7 @@ import com.hyosik.model.Billboard
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class BillboardRepository @Inject constructor(
+class BillboardRepositoryImpl @Inject constructor(
     private val billboardDataSource: BillboardDataSource
 ) : BillboardRepository {
     override fun getBillboard(key: String): Flow<Billboard> = billboardDataSource.getBillboard(key = key)

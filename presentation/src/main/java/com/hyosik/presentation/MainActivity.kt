@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
@@ -27,6 +28,8 @@ import com.hyosik.presentation.extension.toast
 import com.hyosik.presentation.ui.screen.LandScapeScreen
 import com.hyosik.presentation.ui.screen.PotraitScreen
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.hyosik.presentation.ui.viewmodel.MainViewModel
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -34,6 +37,8 @@ class MainActivity : ComponentActivity() {
     /** orientation 변경 시 HsvColorPicker 에서 OnColorChanged 가 계속 호출 되므로  */
     /** TextColor 가 흰색으로 초기화 되는거 방지용 변수 */
     private var isBackKeyPressed: Boolean = false
+
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +64,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-
-                    var text: String by rememberSaveable { mutableStateOf("") }
 
                     var fontSize: Int by rememberSaveable { mutableStateOf(100) }
 
@@ -105,7 +108,7 @@ class MainActivity : ComponentActivity() {
                     when (orientation) {
                         Configuration.ORIENTATION_LANDSCAPE -> {
                             LandScapeScreen(
-                                text = text,
+                                viewModel = hiltViewModel(),
                                 fontSize = fontSize,
                                 textColor = textColor,
                                 dynamicModifier = dynamicModifier,
@@ -116,7 +119,7 @@ class MainActivity : ComponentActivity() {
                         }
                         else -> {
                             PotraitScreen(
-                                text = text,
+                                viewModel = hiltViewModel(),
                                 fontSize = fontSize,
                                 textColor = textColor,
                                 dynamicModifier = dynamicModifier,
@@ -124,7 +127,7 @@ class MainActivity : ComponentActivity() {
                                     if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
                                 },
                                 onValueChange = { newText ->
-                                    if(newText.length <= maxChar) text = newText
+                                    if(newText.length <= maxChar) mainViewModel.saveBillboard(description = newText)
                                 },
                                 fontSizeUp = {
                                     if(fontSize <= maxFontSize) fontSize += 2

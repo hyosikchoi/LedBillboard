@@ -16,6 +16,7 @@ dependencies {
     implementation (libs.androidX.core.ktx)
     implementation (libs.androidX.lifecycle.runtimeTesting)
     implementation (libs.androidX.activity.compose)
+    implementation (libs.androidX.hilt.navigation.compose)
     testImplementation (libs.junit)
     androidTestImplementation (libs.androidX.test.junit)
     androidTestImplementation (libs.androidX.test.espresso)
