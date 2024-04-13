@@ -3,5 +3,6 @@ plugins {
 }
 
 dependencies {
+    implementation (project(":model"))
     implementation(libs.kotlin.coroutine.core)
 }

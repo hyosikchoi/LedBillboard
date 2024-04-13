@@ -1,12 +1,11 @@
-package com.hyosik.domain.repository
+package com.hyosik.data.local
 
 import com.hyosik.model.Billboard
 import kotlinx.coroutines.flow.Flow
 
-interface BillboardRepository {
+interface BillboardDataSource {
 
     fun getBillboard(key: String): Flow<Billboard>
 
-    suspend fun postBillboard(billboard: Billboard)
-
+    suspend fun editBillboard(billboard: Billboard)
 }

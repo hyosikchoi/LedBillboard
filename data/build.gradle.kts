@@ -9,6 +9,7 @@ android {
 
 dependencies {
 
+    implementation (project(":model"))
     implementation (project(":domain"))
 
     implementation (libs.kotlin.coroutine.core)
