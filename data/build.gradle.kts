@@ -1,5 +1,6 @@
 plugins {
     id("hyosik.plugin.library")
+    id("hyosik.plugin.hilt")
 }
 
 android {
@@ -11,5 +12,6 @@ dependencies {
     implementation (project(":domain"))
 
     implementation (libs.kotlin.coroutine.core)
+    implementation (libs.androidX.dataStore)
     testImplementation(libs.junit)
 }
