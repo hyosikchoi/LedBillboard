@@ -8,23 +8,22 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hyosik.presentation.ui.component.BillBoard
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
+import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun LandScapeScreen(
-    viewModel: MainViewModel,
+    text: String,
     fontSize: Int,
     textWidthProvider: (Int) -> Unit,
     textColor: String,
     dynamicModifier: Modifier
 ) {
 
-    val cacheBillboard by viewModel.billboardState.collectAsStateWithLifecycle()
-
     Column(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        BillBoard(text = cacheBillboard.description, fontSize = fontSize, textWidth = { textWidth ->
+        BillBoard(text = text, fontSize = fontSize, textWidth = { textWidth ->
             textWidthProvider(textWidth)
         },
             textColor = textColor,

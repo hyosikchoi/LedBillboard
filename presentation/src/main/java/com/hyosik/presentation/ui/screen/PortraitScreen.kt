@@ -19,10 +19,11 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.hyosik.presentation.enum.Direction
 import com.hyosik.presentation.ui.component.BillBoard
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
+import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun PotraitScreen(
-    viewModel: MainViewModel,
+    text: String,
     fontSize: Int,
     textWidthProvider: (Int) -> Unit,
     textColor: String,
@@ -37,10 +38,6 @@ fun PotraitScreen(
 
     val controller = rememberColorPickerController()
 
-    // collectAsState vs collectAsStateWithLifecycle
-    // UI에서 라이프사이클을 인지하는 방식으로 flow를 수집할 수 있습니다.
-    val cacheBillboard by viewModel.billboardState.collectAsStateWithLifecycle()
-
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -52,22 +49,22 @@ fun PotraitScreen(
                 .height(250.dp)
         ) {
             BillBoard(
-                text = cacheBillboard.description, fontSize = fontSize, textWidth = { textWidth ->
+                text = text, fontSize = fontSize, textWidth = { textWidth ->
                     textWidthProvider(textWidth)
                 },
                 textColor = textColor,
                 dynamicModifier = dynamicModifier
             )
         }
-        //TODO 세팅 하고나서 커서 젤 뒤로 이동 추가
         OutlinedTextField(
-            value = cacheBillboard.description,
+            value = text,
             onValueChange = { newText ->
                 onValueChange(newText)
             },
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
-            singleLine = true
+            singleLine = true,
+
         )
         Row(
             modifier = Modifier

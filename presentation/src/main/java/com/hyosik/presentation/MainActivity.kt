@@ -29,7 +29,16 @@ import com.hyosik.presentation.ui.screen.LandScapeScreen
 import com.hyosik.presentation.ui.screen.PotraitScreen
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.hyosik.model.BILLBOARD_KEY
+import com.hyosik.model.Billboard
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -43,11 +52,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-       /** onBackPressed deprecated 이 후 BackPressedCallback 이용 */
-       val callback = object : OnBackPressedCallback(true) {
+        /** onBackPressed deprecated 이 후 BackPressedCallback 이용 */
+        val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 // 뒤로 버튼 이벤트 처리
-                if(this@MainActivity.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                if (this@MainActivity.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                     finish()
                 } else {
                     isBackKeyPressed = true
@@ -64,6 +73,31 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+
+                    var text: String by rememberSaveable { mutableStateOf("") }
+
+                    // collectAsState vs collectAsStateWithLifecycle
+                    // UI에서 라이프사이클을 인지하는 방식으로 flow를 수집할 수 있습니다.
+//                    val cacheBillboard by mainViewModel.billboardState.collectAsStateWithLifecycle(
+//                        initialValue = Billboard(key = BILLBOARD_KEY , description = "")
+//                    )
+
+                    // 앱 실행 시 한번만 text 에 세팅 되게끔 설정
+                    lifecycleScope.launch {
+                        repeatOnLifecycle(Lifecycle.State.STARTED) {
+                            mainViewModel.billboardState.collectLatest {
+                                if(mainViewModel.getIsFirstGetBillboard()){
+                                    text = it.description
+                                    mainViewModel.setIsFirstGetBillboard()
+                                }
+                            }
+                        }
+                    }
+
+                    // 한 번만 데이터를 수집하고 처리합니다.
+//                    LaunchedEffect(cacheBillboard) {
+//                        text = cacheBillboard.description
+//                    }
 
                     var fontSize: Int by rememberSaveable { mutableStateOf(100) }
 
@@ -92,7 +126,10 @@ class MainActivity : ComponentActivity() {
                     )
 
                     /** scroll 값 때문에 리컴포지션 방지하기 위해 scrollProvider 람다식으로 변경! */
-                    val dynamicModifier = getModifier(direction = direction, billboardTextWidth = billboardTextWidth, scrollProvider = { scroll })
+                    val dynamicModifier = getModifier(
+                        direction = direction,
+                        billboardTextWidth = billboardTextWidth,
+                        scrollProvider = { scroll })
 
                     var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
 
@@ -108,33 +145,39 @@ class MainActivity : ComponentActivity() {
                     when (orientation) {
                         Configuration.ORIENTATION_LANDSCAPE -> {
                             LandScapeScreen(
-                                viewModel = hiltViewModel(),
+                                text = text,
                                 fontSize = fontSize,
                                 textColor = textColor,
                                 dynamicModifier = dynamicModifier,
                                 textWidthProvider = { textWidth ->
-                                    if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
+                                    if (textWidth != billboardTextWidth) billboardTextWidth =
+                                        textWidth
                                 }
                             )
                         }
+
                         else -> {
                             PotraitScreen(
-                                viewModel = hiltViewModel(),
+                                text = text,
                                 fontSize = fontSize,
                                 textColor = textColor,
                                 dynamicModifier = dynamicModifier,
                                 textWidthProvider = { textWidth ->
-                                    if(textWidth != billboardTextWidth) billboardTextWidth = textWidth
+                                    if (textWidth != billboardTextWidth) billboardTextWidth =
+                                        textWidth
                                 },
                                 onValueChange = { newText ->
-                                    if(newText.length <= maxChar) mainViewModel.saveBillboard(description = newText)
+                                    if (newText.length <= maxChar) {
+                                        text = newText
+                                        mainViewModel.saveBillboard(description = newText)
+                                    }
                                 },
                                 fontSizeUp = {
-                                    if(fontSize <= maxFontSize) fontSize += 2
+                                    if (fontSize <= maxFontSize) fontSize += 2
                                     else this@MainActivity.toast("최대 사이즈 입니다.", ToastType.SHORT)
                                 },
                                 fontSizeDown = {
-                                    if(fontSize >= minFontSize) fontSize -= 2
+                                    if (fontSize >= minFontSize) fontSize -= 2
                                     else this@MainActivity.toast("최소 사이즈 입니다.", ToastType.SHORT)
                                 },
                                 requestOrientationProvider = {
@@ -160,7 +203,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun getModifier(direction: Direction, billboardTextWidth: Int, scrollProvider: () -> Float): Modifier = when(direction) {
+    private fun getModifier(
+        direction: Direction,
+        billboardTextWidth: Int,
+        scrollProvider: () -> Float
+    ): Modifier = when (direction) {
         Direction.LEFT -> {
             Modifier
                 .fillMaxWidth()
