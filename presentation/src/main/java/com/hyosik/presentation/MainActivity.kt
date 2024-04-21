@@ -86,18 +86,14 @@ class MainActivity : ComponentActivity() {
                     lifecycleScope.launch {
                         repeatOnLifecycle(Lifecycle.State.STARTED) {
                             mainViewModel.billboardState.collectLatest {
-                                if(mainViewModel.getIsFirstGetBillboard()){
+                                // recomposition 시 해당 스콥이 재실행 되기 때문에 viewModel 에서 first get 인지 체크 한다.
+                                if(mainViewModel.getIsFirstGetBillboard() && text != it.description){
                                     text = it.description
                                     mainViewModel.setIsFirstGetBillboard()
                                 }
                             }
                         }
                     }
-
-                    // 한 번만 데이터를 수집하고 처리합니다.
-//                    LaunchedEffect(cacheBillboard) {
-//                        text = cacheBillboard.description
-//                    }
 
                     var fontSize: Int by rememberSaveable { mutableStateOf(100) }
 

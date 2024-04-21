@@ -7,6 +7,7 @@ import com.hyosik.domain.usecase.PostBillboardUseCase
 import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -24,9 +25,11 @@ class MainViewModel @Inject constructor(
 
     private var isFirst: Boolean = true
 
-    private val _billboardState: MutableSharedFlow<Billboard> = MutableSharedFlow(replay = 0)
+    private val _billboardState: MutableStateFlow<Billboard> = MutableStateFlow(
+        Billboard(key = "", description = "")
+    )
 
-    val billboardState: SharedFlow<Billboard> get() = _billboardState.asSharedFlow()
+    val billboardState: StateFlow<Billboard> get() = _billboardState.asStateFlow()
 
     init {
         getSaveBillboard()
