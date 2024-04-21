@@ -78,21 +78,11 @@ class MainActivity : ComponentActivity() {
 
                     // collectAsState vs collectAsStateWithLifecycle
                     // UI에서 라이프사이클을 인지하는 방식으로 flow를 수집할 수 있습니다.
-//                    val cacheBillboard by mainViewModel.billboardState.collectAsStateWithLifecycle(
-//                        initialValue = Billboard(key = BILLBOARD_KEY , description = "")
-//                    )
+                    val cacheBillboard by mainViewModel.billboardState.collectAsStateWithLifecycle()
 
-                    // 앱 실행 시 한번만 text 에 세팅 되게끔 설정
-                    lifecycleScope.launch {
-                        repeatOnLifecycle(Lifecycle.State.STARTED) {
-                            mainViewModel.billboardState.collectLatest {
-                                // recomposition 시 해당 스콥이 재실행 되기 때문에 viewModel 에서 first get 인지 체크 한다.
-                                if(mainViewModel.getIsFirstGetBillboard() && text != it.description){
-                                    text = it.description
-                                    mainViewModel.setIsFirstGetBillboard()
-                                }
-                            }
-                        }
+                    if(!mainViewModel.getIsFirst() && cacheBillboard.description != "") {
+                        text = cacheBillboard.description
+                        mainViewModel.setIsFirst()
                     }
 
                     var fontSize: Int by rememberSaveable { mutableStateOf(100) }

@@ -14,6 +14,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +27,7 @@ class MainViewModel @Inject constructor(
     private val postBillboardUseCase: PostBillboardUseCase,
 ) : ViewModel() {
 
-    private var isFirst: Boolean = true
+    private var isFirst: Boolean = false
 
     private val _billboardState: MutableStateFlow<Billboard> = MutableStateFlow(
         Billboard(key = "", description = "")
@@ -35,21 +39,23 @@ class MainViewModel @Inject constructor(
         getSaveBillboard()
     }
 
-    fun getSaveBillboard() = viewModelScope.launch {
+    private fun getSaveBillboard() = viewModelScope.launch {
         getBillboardUseCase(BILLBOARD_KEY)
-            .collect { billboard: Billboard ->
-                _billboardState.emit(value = billboard)
+            .takeWhile { !isFirst }
+            .collectLatest {
+                  _billboardState.value = it
             }
+
     }
 
     fun saveBillboard(description: String) = viewModelScope.launch {
         postBillboardUseCase(Billboard(key = BILLBOARD_KEY, description = description))
     }
 
-    fun getIsFirstGetBillboard(): Boolean = isFirst
+    fun getIsFirst() = isFirst
 
-    fun setIsFirstGetBillboard() {
-        isFirst = false
+    fun setIsFirst() {
+        isFirst = true
     }
 
 }
