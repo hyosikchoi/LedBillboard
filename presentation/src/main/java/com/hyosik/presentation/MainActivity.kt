@@ -80,6 +80,7 @@ class MainActivity : ComponentActivity() {
                     // UI에서 라이프사이클을 인지하는 방식으로 flow를 수집할 수 있습니다.
                     val cacheBillboard by mainViewModel.billboardState.collectAsStateWithLifecycle()
 
+                    //TODO UiState 로 초기값 로딩 하게끔 변경하기
                     if(!mainViewModel.getIsFirst() && cacheBillboard.description != "") {
                         text = cacheBillboard.description
                         mainViewModel.setIsFirst()
