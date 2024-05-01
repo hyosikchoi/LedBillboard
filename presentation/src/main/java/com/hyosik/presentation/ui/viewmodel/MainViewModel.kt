@@ -6,17 +6,24 @@ import com.hyosik.domain.usecase.GetBillboardUseCase
 import com.hyosik.domain.usecase.PostBillboardUseCase
 import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
+import com.hyosik.presentation.ui.intent.MainEvent
+import com.hyosik.presentation.ui.intent.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.single
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -27,35 +34,41 @@ class MainViewModel @Inject constructor(
     private val postBillboardUseCase: PostBillboardUseCase,
 ) : ViewModel() {
 
-    private var isFirst: Boolean = false
+    private val events = Channel<MainEvent>()
 
-    private val _billboardState: MutableStateFlow<Billboard> = MutableStateFlow(
-        Billboard(key = "", description = "")
-    )
-
-    val billboardState: StateFlow<Billboard> get() = _billboardState.asStateFlow()
+    val state: StateFlow<MainState> = events.receiveAsFlow()
+        .runningFold(initial = MainState(billboard = Billboard(key = "", description = "")), operation = ::reduceState)
+        .stateIn(scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = MainState(billboard = Billboard(key = "", description = "")))
 
     init {
         getSaveBillboard()
     }
 
+    private fun reduceState(current: MainState, event: MainEvent): MainState {
+        return when(event) {
+            is MainEvent.Initial -> {
+                current.copy(isInitialText = true, billboard = event.billboard)
+            }
+
+            is MainEvent.Edit -> {
+                current.copy(isInitialText = false, billboard = event.billboard)
+            }
+        }
+    }
+
     private fun getSaveBillboard() = viewModelScope.launch {
         getBillboardUseCase(BILLBOARD_KEY)
-            .takeWhile { !isFirst }
+            .takeWhile { state.value.isInitialText }
             .collectLatest {
-                  _billboardState.value = it
+              events.send(MainEvent.Initial(billboard = it))
             }
 
     }
 
     fun saveBillboard(description: String) = viewModelScope.launch {
         postBillboardUseCase(Billboard(key = BILLBOARD_KEY, description = description))
-    }
-
-    fun getIsFirst() = isFirst
-
-    fun setIsFirst() {
-        isFirst = true
+        events.send(MainEvent.Edit(Billboard(key = BILLBOARD_KEY, description = description)))
+        //TODO SideEffect 추가
     }
 
 }

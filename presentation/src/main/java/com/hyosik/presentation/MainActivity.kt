@@ -78,12 +78,11 @@ class MainActivity : ComponentActivity() {
 
                     // collectAsState vs collectAsStateWithLifecycle
                     // UI에서 라이프사이클을 인지하는 방식으로 flow를 수집할 수 있습니다.
-                    val cacheBillboard by mainViewModel.billboardState.collectAsStateWithLifecycle()
+                    val cacheState by mainViewModel.state.collectAsStateWithLifecycle()
 
-                    //TODO UiState 로 초기값 로딩 하게끔 변경하기
-                    if(!mainViewModel.getIsFirst() && cacheBillboard.description != "") {
-                        text = cacheBillboard.description
-                        mainViewModel.setIsFirst()
+                    if(cacheState.isInitialText && text == "") {
+                        text = cacheState.billboard.description
+
                     }
 
                     var fontSize: Int by rememberSaveable { mutableStateOf(100) }
@@ -116,7 +115,8 @@ class MainActivity : ComponentActivity() {
                     val dynamicModifier = getModifier(
                         direction = direction,
                         billboardTextWidth = billboardTextWidth,
-                        scrollProvider = { scroll })
+                        scrollProvider = { scroll }
+                    )
 
                     var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
 
