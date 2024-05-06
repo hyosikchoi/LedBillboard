@@ -11,34 +11,26 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.hyosik.presentation.ui.theme.LedBillboardTheme
-import com.hyosik.presentation.enum.Direction
+import com.hyosik.model.Direction
 import com.hyosik.presentation.enum.ToastType
 import com.hyosik.presentation.extension.toast
 import com.hyosik.presentation.ui.screen.LandScapeScreen
 import com.hyosik.presentation.ui.screen.PotraitScreen
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -80,11 +72,6 @@ class MainActivity : ComponentActivity() {
                     // UI에서 라이프사이클을 인지하는 방식으로 flow를 수집할 수 있습니다.
                     val cacheState by mainViewModel.state.collectAsStateWithLifecycle()
 
-                    if(cacheState.isInitialText && text == "") {
-                        text = cacheState.billboard.description
-
-                    }
-
                     var fontSize: Int by rememberSaveable { mutableStateOf(100) }
 
                     var direction: Direction by rememberSaveable { mutableStateOf(Direction.STOP) }
@@ -92,6 +79,14 @@ class MainActivity : ComponentActivity() {
                     var textColor: String by rememberSaveable { mutableStateOf("FFFFFFFF") }
 
                     var billboardTextWidth: Int by rememberSaveable { mutableStateOf(1) }
+
+                    if(cacheState.isInitialText && text == "") {
+                        text = cacheState.billboard.description
+                        fontSize = cacheState.billboard.fontSize
+                        direction = cacheState.billboard.direction
+                        textColor = cacheState.billboard.textColor
+                        billboardTextWidth = cacheState.billboard.billboardTextWidth
+                    }
 
                     val infiniteTransition = rememberInfiniteTransition()
 
@@ -132,18 +127,12 @@ class MainActivity : ComponentActivity() {
                     when (orientation) {
                         Configuration.ORIENTATION_LANDSCAPE -> {
                             LandScapeScreen(
-                                text = text,
-                                fontSize = fontSize,
-                                textColor = textColor,
-                                dynamicModifier = dynamicModifier,
-                                textWidthProvider = { textWidth ->
-                                    if (textWidth != billboardTextWidth) billboardTextWidth =
-                                        textWidth
-                                }
+                                viewModel = hiltViewModel()
                             )
                         }
 
                         else -> {
+                            //TODO viewModel을 넘겨서 mainViewModel.state 로 관리하게끔 설정
                             PotraitScreen(
                                 text = text,
                                 fontSize = fontSize,
@@ -156,7 +145,16 @@ class MainActivity : ComponentActivity() {
                                 onValueChange = { newText ->
                                     if (newText.length <= maxChar) {
                                         text = newText
-                                        mainViewModel.saveBillboard(description = newText)
+                                        mainViewModel.saveBillboard(
+                                            Billboard(
+                                                key = BILLBOARD_KEY,
+                                                description = newText,
+                                                fontSize = fontSize,
+                                                direction = direction,
+                                                textColor = textColor,
+                                                billboardTextWidth = billboardTextWidth
+                                            )
+                                        )
                                     }
                                 },
                                 fontSizeUp = {

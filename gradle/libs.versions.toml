@@ -92,6 +92,7 @@ colorPicker = "com.github.skydoves:colorpicker-compose:1.0.7"
 junit = "junit:junit:4.13.2"
 assertJ = "org.assertj:assertj-core:3.25.3"
 mockito = "org.mockito:mockito-core:5.11.0"
+gson = "com.google.code.gson:gson:2.10.1"
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "androidStudioGradlePlugin" }

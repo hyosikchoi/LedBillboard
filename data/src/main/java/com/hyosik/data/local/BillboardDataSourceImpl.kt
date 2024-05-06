@@ -5,8 +5,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
+import com.hyosik.model.Direction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -25,15 +28,21 @@ class BillboardDataSourceImpl @Inject constructor(
                 throw exception
             }
         }.map { preferences ->
-            Billboard(
-                key = key,
-                description = preferences[stringPreferencesKey(key)] ?: ""
+            val json = preferences[stringPreferencesKey(key)]
+            val type = object : TypeToken<Billboard>() {}.type
+            Gson().fromJson(json, type) ?: Billboard(
+                key = BILLBOARD_KEY,
+                description = "",
+                fontSize = 100,
+                direction = Direction.STOP,
+                textColor = "FFFFFFFF",
+                billboardTextWidth = 1
             )
         }
 
     override suspend fun editBillboard(billboard: Billboard) {
         dataStore.edit { preferences ->
-            preferences[stringPreferencesKey(billboard.key)] = billboard.description
+            preferences[stringPreferencesKey(billboard.key)] = Gson().toJson(billboard)
         }
     }
 }

@@ -6,6 +6,7 @@ import com.hyosik.domain.usecase.GetBillboardUseCase
 import com.hyosik.domain.usecase.PostBillboardUseCase
 import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
+import com.hyosik.model.Direction
 import com.hyosik.presentation.ui.intent.MainEvent
 import com.hyosik.presentation.ui.intent.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,15 +38,40 @@ class MainViewModel @Inject constructor(
     private val events = Channel<MainEvent>()
 
     val state: StateFlow<MainState> = events.receiveAsFlow()
-        .runningFold(initial = MainState(billboard = Billboard(key = "", description = "")), operation = ::reduceState)
-        .stateIn(scope = viewModelScope, started = SharingStarted.Eagerly, initialValue = MainState(billboard = Billboard(key = "", description = "")))
+        .runningFold(
+            initial = MainState(
+                billboard = Billboard(
+                    key = "",
+                    description = "",
+                    fontSize = 100,
+                    direction = Direction.STOP,
+                    textColor = "FFFFFFFF",
+                    billboardTextWidth = 1
+                )
+            ),
+            operation = ::reduceState
+        )
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = MainState(
+                billboard = Billboard(
+                    key = "",
+                    description = "",
+                    fontSize = 100,
+                    direction = Direction.STOP,
+                    textColor = "FFFFFFFF",
+                    billboardTextWidth = 1
+                )
+            )
+        )
 
     init {
         getSaveBillboard()
     }
 
     private fun reduceState(current: MainState, event: MainEvent): MainState {
-        return when(event) {
+        return when (event) {
             is MainEvent.Initial -> {
                 current.copy(isInitialText = true, billboard = event.billboard)
             }
@@ -60,15 +86,18 @@ class MainViewModel @Inject constructor(
         getBillboardUseCase(BILLBOARD_KEY)
             .takeWhile { state.value.isInitialText }
             .collectLatest {
-              events.send(MainEvent.Initial(billboard = it))
+                events.send(MainEvent.Initial(billboard = it))
             }
 
     }
 
-    fun saveBillboard(description: String) = viewModelScope.launch {
-        postBillboardUseCase(Billboard(key = BILLBOARD_KEY, description = description))
-        events.send(MainEvent.Edit(Billboard(key = BILLBOARD_KEY, description = description)))
-        //TODO SideEffect 추가
+    fun saveBillboard(billboard: Billboard) = viewModelScope.launch {
+        postBillboardUseCase(billboard = billboard)
+        events.send(MainEvent.Edit(billboard = billboard))
+    }
+
+    fun setTextWidth(textWidth: Int) = viewModelScope.launch {
+        events.send(MainEvent.Edit(state.value.billboard.copy(billboardTextWidth = textWidth)))
     }
 
 }

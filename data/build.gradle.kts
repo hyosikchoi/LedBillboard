@@ -15,4 +15,7 @@ dependencies {
     implementation (libs.kotlin.coroutine.core)
     implementation (libs.androidX.dataStore)
     testImplementation(libs.junit)
+
+    // gson
+    implementation(libs.gson)
 }

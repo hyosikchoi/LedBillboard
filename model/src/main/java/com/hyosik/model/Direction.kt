@@ -1,4 +1,4 @@
-package com.hyosik.presentation.enum
+package com.hyosik.model
 
 enum class Direction {
     LEFT,
