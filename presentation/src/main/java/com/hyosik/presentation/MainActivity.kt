@@ -66,53 +66,6 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
-                    var text: String by rememberSaveable { mutableStateOf("") }
-
-                    // collectAsState vs collectAsStateWithLifecycle
-                    // UI에서 라이프사이클을 인지하는 방식으로 flow를 수집할 수 있습니다.
-                    val cacheState by mainViewModel.state.collectAsStateWithLifecycle()
-
-                    var fontSize: Int by rememberSaveable { mutableStateOf(100) }
-
-                    var direction: Direction by rememberSaveable { mutableStateOf(Direction.STOP) }
-
-                    var textColor: String by rememberSaveable { mutableStateOf("FFFFFFFF") }
-
-                    var billboardTextWidth: Int by rememberSaveable { mutableStateOf(1) }
-
-                    if(cacheState.isInitialText && text == "") {
-                        text = cacheState.billboard.description
-                        fontSize = cacheState.billboard.fontSize
-                        direction = cacheState.billboard.direction
-                        textColor = cacheState.billboard.textColor
-                        billboardTextWidth = cacheState.billboard.billboardTextWidth
-                    }
-
-                    val infiniteTransition = rememberInfiniteTransition()
-
-                    val maxChar: Int = 30
-
-                    val minFontSize: Int = 60
-
-                    val maxFontSize: Int = 140
-
-                    /** scroll 값은 지속적으로 변하므로 리컴포지션 조심! */
-                    val scroll by infiniteTransition.animateFloat(
-                        initialValue = 1f,
-                        targetValue = -1f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(10000, easing = LinearEasing),
-                            repeatMode = RepeatMode.Restart,
-                        ), label = ""
-                    )
-
-                    /** scroll 값 때문에 리컴포지션 방지하기 위해 scrollProvider 람다식으로 변경! */
-                    val dynamicModifier = getModifier(
-                        direction = direction,
-                        billboardTextWidth = billboardTextWidth,
-                        scrollProvider = { scroll }
-                    )
-
                     var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
 
                     val configuration = LocalConfiguration.current
@@ -132,49 +85,19 @@ class MainActivity : ComponentActivity() {
                         }
 
                         else -> {
-                            //TODO viewModel을 넘겨서 mainViewModel.state 로 관리하게끔 설정
                             PotraitScreen(
-                                text = text,
-                                fontSize = fontSize,
-                                textColor = textColor,
-                                dynamicModifier = dynamicModifier,
-                                textWidthProvider = { textWidth ->
-                                    if (textWidth != billboardTextWidth) billboardTextWidth =
-                                        textWidth
-                                },
-                                onValueChange = { newText ->
-                                    if (newText.length <= maxChar) {
-                                        text = newText
-                                        mainViewModel.saveBillboard(
-                                            Billboard(
-                                                key = BILLBOARD_KEY,
-                                                description = newText,
-                                                fontSize = fontSize,
-                                                direction = direction,
-                                                textColor = textColor,
-                                                billboardTextWidth = billboardTextWidth
-                                            )
-                                        )
-                                    }
-                                },
-                                fontSizeUp = {
-                                    if (fontSize <= maxFontSize) fontSize += 2
-                                    else this@MainActivity.toast("최대 사이즈 입니다.", ToastType.SHORT)
-                                },
-                                fontSizeDown = {
-                                    if (fontSize >= minFontSize) fontSize -= 2
-                                    else this@MainActivity.toast("최소 사이즈 입니다.", ToastType.SHORT)
-                                },
+                                viewModel = hiltViewModel(),
                                 requestOrientationProvider = {
                                     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                                 },
-                                directionProvider = { changeDirection: Direction ->
-                                    direction = changeDirection
-                                },
                                 onColorChanged = { colorEnvelope: ColorEnvelope ->
                                     if (isBackKeyPressed.not()) {
-                                        if (colorEnvelope.hexCode != textColor) {
-                                            textColor = colorEnvelope.hexCode
+                                        if (colorEnvelope.hexCode != mainViewModel.state.value.billboard.textColor) {
+                                            mainViewModel.saveBillboard(
+                                                billboard = mainViewModel.state.value.billboard.copy(
+                                                    textColor = colorEnvelope.hexCode
+                                                )
+                                            )
                                         }
                                     } else {
                                         isBackKeyPressed = false
@@ -187,38 +110,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    private fun getModifier(
-        direction: Direction,
-        billboardTextWidth: Int,
-        scrollProvider: () -> Float
-    ): Modifier = when (direction) {
-        Direction.LEFT -> {
-            Modifier
-                .fillMaxWidth()
-                .horizontalScroll(state = ScrollState(0), enabled = false)
-                .graphicsLayer(
-                    translationX = (billboardTextWidth * scrollProvider()),
-                    translationY = 0f
-                )
-        }
-
-        Direction.STOP -> {
-            Modifier
-                .fillMaxWidth()
-                .horizontalScroll(state = ScrollState(0), enabled = true)
-        }
-
-        Direction.RIGHT -> {
-            Modifier
-                .fillMaxWidth()
-                .horizontalScroll(state = ScrollState(0), enabled = false)
-                .graphicsLayer(
-                    translationX = -billboardTextWidth * scrollProvider(),
-                    translationY = 0f
-                )
-        }
-    }
-
 }
 

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.single
@@ -77,23 +78,22 @@ class MainViewModel @Inject constructor(
             }
 
             is MainEvent.Edit -> {
-                current.copy(isInitialText = false, billboard = event.billboard)
+                current.copy(billboard = event.billboard)
             }
         }
     }
 
     private fun getSaveBillboard() = viewModelScope.launch {
         getBillboardUseCase(BILLBOARD_KEY)
-            .takeWhile { state.value.isInitialText }
+//            .takeWhile { state.value.isInitialText }
             .collectLatest {
-                events.send(MainEvent.Initial(billboard = it))
+               if(state.value.isInitialText.not()) events.send(MainEvent.Initial(billboard = it))
             }
-
     }
 
     fun saveBillboard(billboard: Billboard) = viewModelScope.launch {
-        postBillboardUseCase(billboard = billboard)
         events.send(MainEvent.Edit(billboard = billboard))
+        postBillboardUseCase(billboard = billboard)
     }
 
     fun setTextWidth(textWidth: Int) = viewModelScope.launch {

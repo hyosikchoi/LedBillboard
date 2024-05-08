@@ -17,31 +17,36 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.hyosik.model.BILLBOARD_KEY
+import com.hyosik.model.Billboard
 import com.hyosik.model.Direction
+import com.hyosik.presentation.enum.ToastType
+import com.hyosik.presentation.extension.toast
 import com.hyosik.presentation.ui.component.BillBoard
+import com.hyosik.presentation.ui.viewmodel.MainViewModel
 
 @Composable
 fun PotraitScreen(
-    text: String,
-    fontSize: Int,
-    textWidthProvider: (Int) -> Unit,
-    textColor: String,
-    dynamicModifier: Modifier,
+    viewModel: MainViewModel,
     requestOrientationProvider: () -> Unit,
-    onValueChange: (String) -> Unit,
-    fontSizeUp: () -> Unit,
-    fontSizeDown: () -> Unit,
-    directionProvider: (Direction) -> Unit,
     onColorChanged: (ColorEnvelope) -> Unit
 ) {
 
+    val context = LocalContext.current
+
     val controller = rememberColorPickerController()
+
+    // collectAsState vs collectAsStateWithLifecycle
+    // UI에서 라이프사이클을 인지하는 방식으로 flow를 수집할 수 있습니다.
+    val cacheState by viewModel.state.collectAsStateWithLifecycle()
 
     val infiniteTransition = rememberInfiniteTransition()
 
@@ -51,22 +56,15 @@ fun PotraitScreen(
 
     val maxFontSize: Int = 140
 
-//    /** scroll 값은 지속적으로 변하므로 리컴포지션 조심! */
-//    val scroll by infiniteTransition.animateFloat(
-//        initialValue = 1f,
-//        targetValue = -1f,
-//        animationSpec = infiniteRepeatable(
-//            animation = tween(10000, easing = LinearEasing),
-//            repeatMode = RepeatMode.Restart,
-//        ), label = ""
-//    )
-
-//    /** scroll 값 때문에 리컴포지션 방지하기 위해 scrollProvider 람다식으로 변경! */
-//    val dynamicModifier = getModifier(
-//        direction = cacheState.billboard.direction,
-//        billboardTextWidth = cacheState.billboard.billboardTextWidth,
-//        scrollProvider = { scroll }
-//    )
+    /** scroll 값은 지속적으로 변하므로 리컴포지션 조심! */
+    val scroll by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = -1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart,
+        ), label = ""
+    )
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -79,17 +77,28 @@ fun PotraitScreen(
                 .height(250.dp)
         ) {
             BillBoard(
-                text = text, fontSize = fontSize, textWidth = { textWidth ->
-                    textWidthProvider(textWidth)
+                text = cacheState.billboard.description, fontSize = cacheState.billboard.fontSize, textWidth = { textWidth ->
+                    viewModel.setTextWidth(textWidth = textWidth)
                 },
-                textColor = textColor,
-                dynamicModifier = dynamicModifier
+                textColor = cacheState.billboard.textColor,
+                dynamicModifier = getModifier(
+                    direction = cacheState.billboard.direction,
+                    billboardTextWidth = cacheState.billboard.billboardTextWidth,
+                    scrollProvider = { scroll }
+                )
             )
         }
         OutlinedTextField(
-            value = text,
+            value = cacheState.billboard.description,
             onValueChange = { newText ->
-                onValueChange(newText)
+                if (newText.length <= maxChar) {
+                    viewModel.saveBillboard(
+                        cacheState.billboard.copy(
+                            key = BILLBOARD_KEY,
+                            description = newText,
+                        )
+                    )
+                }
             },
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
@@ -104,7 +113,14 @@ fun PotraitScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(onClick = {
-                fontSizeUp()
+                if (cacheState.billboard.fontSize <= maxFontSize) {
+                    viewModel.saveBillboard(
+                        cacheState.billboard.copy(
+                            fontSize = cacheState.billboard.fontSize + 2
+                        )
+                    )
+                }
+                else context.toast("최대 사이즈 입니다.", ToastType.SHORT)
             }) {
                 Text(text = "+", textAlign = TextAlign.Center, fontSize = 25.sp)
             }
@@ -116,7 +132,14 @@ fun PotraitScreen(
             }
 
             Button(onClick = {
-                fontSizeDown()
+                if (cacheState.billboard.fontSize >= minFontSize){
+                    viewModel.saveBillboard(
+                        cacheState.billboard.copy(
+                            fontSize = cacheState.billboard.fontSize - 2
+                        )
+                    )
+                }
+                else context.toast("최소 사이즈 입니다.", ToastType.SHORT)
             }) {
                 Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
             }
@@ -129,13 +152,31 @@ fun PotraitScreen(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Button(onClick = { directionProvider(Direction.LEFT) }) {
+            Button(onClick = {
+                viewModel.saveBillboard(
+                    cacheState.billboard.copy(
+                        direction = Direction.LEFT
+                    )
+                )
+            }) {
                 Text(text = "←", textAlign = TextAlign.Center, fontSize = 25.sp)
             }
-            Button(onClick = { directionProvider(Direction.STOP) }) {
+            Button(onClick = {
+                viewModel.saveBillboard(
+                    cacheState.billboard.copy(
+                        direction = Direction.STOP
+                    )
+                )
+            }) {
                 Text(text = "STOP", textAlign = TextAlign.Center, fontSize = 25.sp)
             }
-            Button(onClick = { directionProvider(Direction.RIGHT) }) {
+            Button(onClick = {
+                viewModel.saveBillboard(
+                    cacheState.billboard.copy(
+                        direction = Direction.RIGHT
+                    )
+                )
+            }) {
                 Text(text = "→", textAlign = TextAlign.Center, fontSize = 25.sp)
             }
         }
@@ -147,7 +188,7 @@ fun PotraitScreen(
                 .padding(10.dp),
             controller = controller,
             onColorChanged = { colorEnvelope: ColorEnvelope ->
-                onColorChanged(colorEnvelope)
+                if(cacheState.isInitialText) onColorChanged(colorEnvelope)
             },
         )
     }
