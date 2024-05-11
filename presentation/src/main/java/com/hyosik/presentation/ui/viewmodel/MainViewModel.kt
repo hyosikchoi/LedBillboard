@@ -41,14 +41,7 @@ class MainViewModel @Inject constructor(
     val state: StateFlow<MainState> = events.receiveAsFlow()
         .runningFold(
             initial = MainState(
-                billboard = Billboard(
-                    key = "",
-                    description = "",
-                    fontSize = 100,
-                    direction = Direction.STOP,
-                    textColor = "FFFFFFFF",
-                    billboardTextWidth = 1
-                )
+                billboard = Billboard()
             ),
             operation = ::reduceState
         )
@@ -56,14 +49,7 @@ class MainViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
             initialValue = MainState(
-                billboard = Billboard(
-                    key = "",
-                    description = "",
-                    fontSize = 100,
-                    direction = Direction.STOP,
-                    textColor = "FFFFFFFF",
-                    billboardTextWidth = 1
-                )
+                billboard = Billboard()
             )
         )
 
