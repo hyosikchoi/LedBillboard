@@ -5,28 +5,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.hyosik.presentation.ui.theme.color.Black500
+import com.hyosik.presentation.ui.theme.color.ColorSet
+import com.hyosik.presentation.ui.theme.color.MyColors
+import com.hyosik.presentation.ui.theme.color.Purple200
+import com.hyosik.presentation.ui.theme.color.Purple500
+import com.hyosik.presentation.ui.theme.color.Purple700
+import com.hyosik.presentation.ui.theme.color.Teal200
 
-private val DarkColorPalette = darkColorScheme(
-    primary = Purple200,
-    primaryContainer = Purple200,
-    secondary = Teal200
-)
-
-private val LightColorPalette = lightColorScheme(
-    primary = Purple500,
-    primaryContainer = Purple700,
-    secondary = Teal200
-
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
-)
+private val LocalColors = staticCompositionLocalOf { ColorSet.DarkColorSet.myColors } // 초기값 설정
 
 @Composable
 fun LedBillboardTheme(
@@ -40,16 +31,20 @@ fun LedBillboardTheme(
         color = Black500
     )
 
-    val colors = if (darkTheme) {
-        DarkColorPalette
+    val colors: MyColors = if (darkTheme) {
+        ColorSet.DarkColorSet.myColors
     } else {
-        LightColorPalette
+        ColorSet.LightColorSet.myColors
     }
 
-    MaterialTheme(
-        colorScheme = colors,
-        typography = Typography,
-        shapes = Shapes,
-        content = content
-    )
+    // provides 로 colors 변수를 LocalColors 에 주입
+    CompositionLocalProvider(LocalColors provides colors) {
+        MaterialTheme(
+            colorScheme = colors.material,
+            typography = Typography,
+            shapes = Shapes,
+            content = content
+        )
+    }
 }
+

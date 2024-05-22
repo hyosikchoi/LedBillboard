@@ -14,7 +14,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import com.hyosik.presentation.ui.theme.Black500
+import com.hyosik.presentation.ui.theme.color.Black500
 
 @Composable
 fun BillBoard(
