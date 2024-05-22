@@ -1,10 +1,11 @@
 package com.hyosik.presentation.ui.theme.color
 
+import android.graphics.Color.parseColor
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
-val White200 = Color(0xFFFFFFFF)
+val White200 = Color(parseColor("#FFFFFF"))
 val Purple200 = Color(0xFFBB86FC)
 val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
