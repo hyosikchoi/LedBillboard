@@ -14,6 +14,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import com.hyosik.presentation.ui.theme.buttonText
 import com.hyosik.presentation.ui.theme.color.Black500
 
 @Composable
@@ -42,7 +43,7 @@ fun BillBoard(
                 textWidth(layoutCoordinates.size.width)
             },
             overflow = TextOverflow.Visible,
-            style = MaterialTheme.typography.headlineSmall.copy(
+            style = MaterialTheme.typography.buttonText.copy(
                 shadow = Shadow(
                     color = Color(android.graphics.Color.parseColor("#${textColor}")),
                     offset = Offset(4f, 2f),

@@ -10,6 +10,7 @@ import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import com.hyosik.model.Direction
 import com.hyosik.presentation.enum.ToastType
 import com.hyosik.presentation.extension.toast
 import com.hyosik.presentation.ui.component.BillBoard
+import com.hyosik.presentation.ui.theme.buttonText
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
 
 @Composable
@@ -103,7 +105,7 @@ fun PotraitScreen(
             modifier = Modifier.fillMaxWidth(),
             maxLines = 1,
             singleLine = true,
-
+            textStyle = MaterialTheme.typography.buttonText
         )
         Row(
             modifier = Modifier
