@@ -6,6 +6,7 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.hyosik.presentation.ui.theme.color.Black500
@@ -44,4 +45,12 @@ fun LedBillboardTheme(
         )
     }
 }
+
+/**
+ * 현재 내 테마에 적용된 색깔을 확장함수 형태로 만들어 어디서든 read 하여 사용할 수 있게 한다.
+ */
+val MaterialTheme.myColorScheme: MyColors
+@Composable
+@ReadOnlyComposable
+get() = LocalColors.current
 

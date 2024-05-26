@@ -7,29 +7,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.core.*
-import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.hyosik.presentation.ui.theme.LedBillboardTheme
-import com.hyosik.model.Direction
-import com.hyosik.presentation.enum.ToastType
-import com.hyosik.presentation.extension.toast
 import com.hyosik.presentation.ui.screen.LandScapeScreen
 import com.hyosik.presentation.ui.screen.PotraitScreen
+import com.hyosik.presentation.ui.theme.myColorScheme
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.hyosik.model.BILLBOARD_KEY
-import com.hyosik.model.Billboard
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
 
 @AndroidEntryPoint
@@ -63,7 +53,7 @@ class MainActivity : ComponentActivity() {
             LedBillboardTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.myColorScheme.background
                 ) {
 
                     var orientation by remember { mutableStateOf(Configuration.ORIENTATION_PORTRAIT) }
