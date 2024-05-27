@@ -7,17 +7,21 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.hyosik.presentation.ui.theme.LedBillboardTheme
 import com.hyosik.presentation.ui.screen.LandScapeScreen
 import com.hyosik.presentation.ui.screen.PotraitScreen
+import com.hyosik.presentation.ui.theme.color.Black500
 import com.hyosik.presentation.ui.theme.myColorScheme
 import dagger.hilt.android.AndroidEntryPoint
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
@@ -33,7 +37,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         /** onBackPressed deprecated 이 후 BackPressedCallback 이용 */
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -50,6 +53,14 @@ class MainActivity : ComponentActivity() {
         this.onBackPressedDispatcher.addCallback(this, callback)
 
         setContent {
+            val isDarkMod = isSystemInDarkTheme()
+            LaunchedEffect(isDarkMod) {
+                this@MainActivity.window.statusBarColor = Black500.toArgb() // statusBar 색상 설정
+                WindowCompat.getInsetsController(this@MainActivity.window, this@MainActivity.window.decorView).apply {
+                    isAppearanceLightStatusBars = false // statusBar 상단 아이콘 light, dark 설정
+                }
+            }
+
             LedBillboardTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),

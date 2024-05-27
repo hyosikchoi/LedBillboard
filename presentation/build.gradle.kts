@@ -27,6 +27,4 @@ dependencies {
     // color picker
     implementation (libs.colorPicker)
 
-    // system bar
-    implementation (libs.accompanist.system.uicontroller)
 }

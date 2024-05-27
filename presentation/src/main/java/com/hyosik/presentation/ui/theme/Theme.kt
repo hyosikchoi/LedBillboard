@@ -8,8 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.hyosik.presentation.ui.theme.color.Black500
 import com.hyosik.presentation.ui.theme.color.ColorSet
 import com.hyosik.presentation.ui.theme.color.MyColors
 
@@ -22,12 +20,6 @@ fun LedBillboardTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    /** 상단 SystemBar Color 변경 */
-    val systemUiController = rememberSystemUiController()
-
-    systemUiController.setStatusBarColor(
-        color = Black500
-    )
 
     val colors: MyColors = if (darkTheme) {
         ColorSet.DarkColorSet.myColors

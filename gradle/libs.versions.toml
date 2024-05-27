@@ -7,6 +7,7 @@ compose = "1.5.0-alpha03"
 compose-material3 = "1.1.0-alpha04"
 #compose-bom = "2024.03.00"
 composeCompiler = "1.5.3"
+
 lifecycle = "2.6.1"
 room = "2.6.1"
 paging = "3.2.1"
@@ -15,7 +16,6 @@ datastore = "1.0.0"
 # 3rd-party
 coil = "2.6.0"
 dagger = "2.48"
-accompanist = "0.27.0"
 kotlin = "1.9.10"
 ksp = "1.9.10-1.0.13"
 kotlin-coroutine = "1.8.0"
@@ -76,9 +76,6 @@ kotlin-coroutine-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-cor
 kotlin-coroutine-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlin-coroutine" }
 kotlin-coroutine-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutine" }
 kotlin-serialization = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
-
-## Accompanist
-accompanist-system-uicontroller = {module = "com.google.accompanist:accompanist-systemuicontroller" , version.ref = "accompanist"}
 
 ## etc
 coil-core = { module = "io.coil-kt:coil", version.ref = "coil" }
