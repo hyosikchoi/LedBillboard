@@ -37,6 +37,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        this@MainActivity.window.statusBarColor = Black500.toArgb() // statusBar 색상 설정
+        WindowCompat.getInsetsController(this@MainActivity.window, this@MainActivity.window.decorView).apply {
+            isAppearanceLightStatusBars = false // statusBar 상단 아이콘 light, dark 설정
+        }
+
         /** onBackPressed deprecated 이 후 BackPressedCallback 이용 */
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -53,14 +59,6 @@ class MainActivity : ComponentActivity() {
         this.onBackPressedDispatcher.addCallback(this, callback)
 
         setContent {
-            val isDarkMod = isSystemInDarkTheme()
-            LaunchedEffect(isDarkMod) {
-                this@MainActivity.window.statusBarColor = Black500.toArgb() // statusBar 색상 설정
-                WindowCompat.getInsetsController(this@MainActivity.window, this@MainActivity.window.decorView).apply {
-                    isAppearanceLightStatusBars = false // statusBar 상단 아이콘 light, dark 설정
-                }
-            }
-
             LedBillboardTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
