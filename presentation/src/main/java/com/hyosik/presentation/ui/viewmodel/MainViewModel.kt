@@ -37,7 +37,9 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val events = Channel<MainEvent>()
-
+    //TODO core 모듈 만들고 UiState 객체 생성 후 gradle 에 core 모듈 implement 한다음에 MainState 에 상속 시킨다.
+    //TODO presentation 모듈도 features 모듈로 변경하고 화면 별로 모듈을 나눈다.
+    // theme 도 모듈로 나눈다.
     val state: StateFlow<MainState> = events.receiveAsFlow()
         .runningFold(
             initial = MainState(
