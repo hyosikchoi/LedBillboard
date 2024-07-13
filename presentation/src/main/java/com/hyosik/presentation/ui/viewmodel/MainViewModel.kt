@@ -2,6 +2,7 @@ package com.hyosik.presentation.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hyosik.core.ui.state.UiState
 import com.hyosik.domain.usecase.GetBillboardUseCase
 import com.hyosik.domain.usecase.PostBillboardUseCase
 import com.hyosik.model.BILLBOARD_KEY
@@ -37,36 +38,38 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val events = Channel<MainEvent>()
-    //TODO core 모듈 만들고 UiState 객체 생성 후 gradle 에 core 모듈 implement 한다음에 MainState 에 상속 시킨다.
     //TODO presentation 모듈도 features 모듈로 변경하고 화면 별로 모듈을 나눈다.
     // theme 도 모듈로 나눈다.
-    val state: StateFlow<MainState> = events.receiveAsFlow()
+    val state: StateFlow<UiState<MainState>> = events.receiveAsFlow()
         .runningFold(
-            initial = MainState(
-                billboard = Billboard()
+            initial = UiState<MainState>(
+                data = MainState(
+                    billboard = Billboard()
+                )
             ),
             operation = ::reduceState
         )
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
-            initialValue = MainState(
+            initialValue = UiState<MainState>(
+                data =  MainState (
                 billboard = Billboard()
-            )
+            ))
         )
 
     init {
         getSaveBillboard()
     }
 
-    private fun reduceState(current: MainState, event: MainEvent): MainState {
+    private fun reduceState(current: UiState<MainState>, event: MainEvent): UiState<MainState> {
         return when (event) {
             is MainEvent.Initial -> {
-                current.copy(isInitialText = true, billboard = event.billboard)
+                UiState.success(current.data?.copy(isInitialText = true, billboard = event.billboard) as MainState)
             }
 
             is MainEvent.Edit -> {
-                current.copy(billboard = event.billboard)
+                UiState.success(current.data?.copy(billboard = event.billboard) as MainState)
             }
         }
     }
@@ -74,8 +77,10 @@ class MainViewModel @Inject constructor(
     private fun getSaveBillboard() = viewModelScope.launch {
         getBillboardUseCase(BILLBOARD_KEY)
 //            .takeWhile { state.value.isInitialText }
-            .collectLatest {
-               if(state.value.isInitialText.not()) events.send(MainEvent.Initial(billboard = it))
+            .collectLatest { billboard ->
+                state.value.data?.let {
+                    if(it.isInitialText.not()) events.send(MainEvent.Initial(billboard = billboard))
+                }
             }
     }
 
@@ -85,7 +90,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun setTextWidth(textWidth: Int) = viewModelScope.launch {
-        events.send(MainEvent.Edit(state.value.billboard.copy(billboardTextWidth = textWidth)))
+        events.send(MainEvent.Edit(state.value.data?.billboard?.copy(billboardTextWidth = textWidth) as Billboard))
     }
 
 }

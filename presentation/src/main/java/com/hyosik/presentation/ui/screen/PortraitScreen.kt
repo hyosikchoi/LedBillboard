@@ -30,6 +30,7 @@ import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
 import com.hyosik.model.Direction
 import com.hyosik.presentation.enum.ToastType
+import com.hyosik.presentation.extension.orZero
 import com.hyosik.presentation.extension.toast
 import com.hyosik.presentation.ui.component.BillBoard
 import com.hyosik.presentation.ui.theme.buttonText
@@ -73,126 +74,142 @@ fun PotraitScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(250.dp)
-        ) {
-            BillBoard(
-                text = cacheState.billboard.description, fontSize = cacheState.billboard.fontSize, textWidth = { textWidth ->
-                    viewModel.setTextWidth(textWidth = textWidth)
+        if(cacheState.isSuccess) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            ) {
+                BillBoard(
+                    text = cacheState.data?.billboard?.description.orEmpty(), fontSize = cacheState.data?.billboard?.fontSize.orZero(), textWidth = { textWidth ->
+                        viewModel.setTextWidth(textWidth = textWidth)
+                    },
+                    textColor = cacheState.data!!.billboard.textColor,
+                    dynamicModifier = getModifier(
+                        direction = cacheState.data!!.billboard.direction,
+                        billboardTextWidth = cacheState.data!!.billboard.billboardTextWidth,
+                        scrollProvider = { scroll }
+                    )
+                )
+            }
+            OutlinedTextField(
+                value = cacheState.data?.billboard?.description.orEmpty(),
+                onValueChange = { newText ->
+                    if (newText.length <= maxChar) {
+                        cacheState.data?.billboard?.let {
+                            viewModel.saveBillboard(
+                                it.copy(
+                                    key = BILLBOARD_KEY,
+                                    description = newText,
+                                )
+                            )
+                        }
+                    }
                 },
-                textColor = cacheState.billboard.textColor,
-                dynamicModifier = getModifier(
-                    direction = cacheState.billboard.direction,
-                    billboardTextWidth = cacheState.billboard.billboardTextWidth,
-                    scrollProvider = { scroll }
-                )
+                modifier = Modifier.fillMaxWidth(),
+                maxLines = 1,
+                singleLine = true,
+                textStyle = MaterialTheme.typography.buttonText
             )
-        }
-        OutlinedTextField(
-            value = cacheState.billboard.description,
-            onValueChange = { newText ->
-                if (newText.length <= maxChar) {
-                    viewModel.saveBillboard(
-                        cacheState.billboard.copy(
-                            key = BILLBOARD_KEY,
-                            description = newText,
-                        )
-                    )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(onClick = {
+                    if (cacheState.data?.billboard?.fontSize.orZero() <= maxFontSize) {
+                        cacheState.data?.billboard?.let {
+                            viewModel.saveBillboard(
+                                it.copy(
+                                    fontSize = it.fontSize + 2
+                                )
+                            )
+                        }
+                    }
+                    else context.toast("최대 사이즈 입니다.", ToastType.SHORT)
+                }) {
+                    Text(text = "+", textAlign = TextAlign.Center, fontSize = 25.sp)
                 }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            maxLines = 1,
-            singleLine = true,
-            textStyle = MaterialTheme.typography.buttonText
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(onClick = {
-                if (cacheState.billboard.fontSize <= maxFontSize) {
-                    viewModel.saveBillboard(
-                        cacheState.billboard.copy(
-                            fontSize = cacheState.billboard.fontSize + 2
-                        )
-                    )
+
+                Button(onClick = {
+                    requestOrientationProvider()
+                }) {
+                    Text(text = "START", textAlign = TextAlign.Center, fontSize = 25.sp)
                 }
-                else context.toast("최대 사이즈 입니다.", ToastType.SHORT)
-            }) {
-                Text(text = "+", textAlign = TextAlign.Center, fontSize = 25.sp)
-            }
 
-            Button(onClick = {
-                requestOrientationProvider()
-            }) {
-                Text(text = "START", textAlign = TextAlign.Center, fontSize = 25.sp)
-            }
+                Button(onClick = {
+                    if (cacheState.data?.billboard?.fontSize.orZero() >= minFontSize){
+                        cacheState.data?.billboard?.let {
+                            viewModel.saveBillboard(
+                                it.copy(
+                                    fontSize = it.fontSize - 2
+                                )
+                            )
+                        }
 
-            Button(onClick = {
-                if (cacheState.billboard.fontSize >= minFontSize){
-                    viewModel.saveBillboard(
-                        cacheState.billboard.copy(
-                            fontSize = cacheState.billboard.fontSize - 2
-                        )
-                    )
+                    }
+                    else context.toast("최소 사이즈 입니다.", ToastType.SHORT)
+                }) {
+                    Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
                 }
-                else context.toast("최소 사이즈 입니다.", ToastType.SHORT)
-            }) {
-                Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
             }
-        }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(onClick = {
-                viewModel.saveBillboard(
-                    cacheState.billboard.copy(
-                        direction = Direction.LEFT
-                    )
-                )
-            }) {
-                Text(text = "←", textAlign = TextAlign.Center, fontSize = 25.sp)
-            }
-            Button(onClick = {
-                viewModel.saveBillboard(
-                    cacheState.billboard.copy(
-                        direction = Direction.STOP
-                    )
-                )
-            }) {
-                Text(text = "STOP", textAlign = TextAlign.Center, fontSize = 25.sp)
-            }
-            Button(onClick = {
-                viewModel.saveBillboard(
-                    cacheState.billboard.copy(
-                        direction = Direction.RIGHT
-                    )
-                )
-            }) {
-                Text(text = "→", textAlign = TextAlign.Center, fontSize = 25.sp)
-            }
-        }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(onClick = {
+                    cacheState.data?.billboard?.let {
+                        viewModel.saveBillboard(
+                            it.copy(
+                                direction = Direction.LEFT
+                            )
+                        )
+                    }
 
-        HsvColorPicker(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(350.dp)
-                .padding(10.dp),
-            controller = controller,
-            onColorChanged = { colorEnvelope: ColorEnvelope ->
-                if(cacheState.isInitialText) onColorChanged(colorEnvelope)
-            },
-        )
+                }) {
+                    Text(text = "←", textAlign = TextAlign.Center, fontSize = 25.sp)
+                }
+                Button(onClick = {
+                    cacheState.data?.billboard?.let {
+                        viewModel.saveBillboard(
+                            it.copy(
+                                direction = Direction.STOP
+                            )
+                        )
+                    }
+                }) {
+                    Text(text = "STOP", textAlign = TextAlign.Center, fontSize = 25.sp)
+                }
+                Button(onClick = {
+                    cacheState.data?.billboard?.let {
+                        viewModel.saveBillboard(
+                            it.copy(
+                                direction = Direction.RIGHT
+                            )
+                        )
+                    }
+                }) {
+                    Text(text = "→", textAlign = TextAlign.Center, fontSize = 25.sp)
+                }
+            }
+
+            HsvColorPicker(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp)
+                    .padding(10.dp),
+                controller = controller,
+                onColorChanged = { colorEnvelope: ColorEnvelope ->
+                    if(cacheState.data?.isInitialText == true) onColorChanged(colorEnvelope)
+                },
+            )     
+        }
     }
 }
 

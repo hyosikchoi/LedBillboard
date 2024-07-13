@@ -12,6 +12,7 @@ dependencies {
 
     implementation (project(":model"))
     implementation (project(":domain"))
+    implementation (project(":core"))
 
     implementation (libs.androidX.core.ktx)
     implementation (libs.androidX.lifecycle.runtimeTesting)

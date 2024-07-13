@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.hyosik.model.Direction
+import com.hyosik.presentation.extension.orZero
 import com.hyosik.presentation.ui.component.BillBoard
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
@@ -47,15 +48,15 @@ fun LandScapeScreen(
             .fillMaxSize()
     ) {
         BillBoard(
-            text = cacheState.billboard.description,
-            fontSize = cacheState.billboard.fontSize,
+            text = cacheState.data?.billboard?.description.orEmpty(),
+            fontSize = cacheState.data?.billboard?.fontSize.orZero(),
             textWidth = { textWidth ->
             viewModel.setTextWidth(textWidth = textWidth)
         },
-            textColor = cacheState.billboard.textColor,
+            textColor = cacheState.data?.billboard?.textColor.orEmpty(),
             dynamicModifier = getModifier(
-                direction = cacheState.billboard.direction,
-                billboardTextWidth = cacheState.billboard.billboardTextWidth,
+                direction = cacheState.data?.billboard?.direction ?: Direction.STOP,
+                billboardTextWidth = cacheState.data?.billboard?.billboardTextWidth.orZero(),
                 scrollProvider = {
                     scroll
                 }
