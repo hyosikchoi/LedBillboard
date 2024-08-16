@@ -75,10 +75,10 @@ private fun getModifier(
         Modifier
             .fillMaxWidth()
             .horizontalScroll(state = ScrollState(0), enabled = false)
-            .graphicsLayer(
-                translationX = (billboardTextWidth * scrollProvider()),
+            .graphicsLayer {
+                translationX = (billboardTextWidth * scrollProvider())
                 translationY = 0f
-            )
+            }
     }
 
     Direction.STOP -> {
@@ -91,9 +91,9 @@ private fun getModifier(
         Modifier
             .fillMaxWidth()
             .horizontalScroll(state = ScrollState(0), enabled = false)
-            .graphicsLayer(
-                translationX = -billboardTextWidth * scrollProvider(),
+            .graphicsLayer {
+                translationX = -billboardTextWidth * scrollProvider()
                 translationY = 0f
-            )
+            }
     }
 }

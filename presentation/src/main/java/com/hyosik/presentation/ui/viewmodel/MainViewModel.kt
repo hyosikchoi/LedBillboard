@@ -8,6 +8,7 @@ import com.hyosik.domain.usecase.PostBillboardUseCase
 import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
 import com.hyosik.model.Direction
+import com.hyosik.presentation.ui.intent.MainEffect
 import com.hyosik.presentation.ui.intent.MainEvent
 import com.hyosik.presentation.ui.intent.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.runningFold
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.takeWhile
@@ -57,6 +59,10 @@ class MainViewModel @Inject constructor(
                 billboard = Billboard()
             ))
         )
+
+    private val _sideEffects: MutableSharedFlow<MainEffect> = MutableSharedFlow<MainEffect>(replay = 0)
+
+    val sideEffects: SharedFlow<MainEffect> = _sideEffects.asSharedFlow()
 
     init {
         getSaveBillboard()
@@ -91,6 +97,10 @@ class MainViewModel @Inject constructor(
 
     fun setTextWidth(textWidth: Int) = viewModelScope.launch {
         events.send(MainEvent.Edit(state.value.data?.billboard?.copy(billboardTextWidth = textWidth) as Billboard))
+    }
+
+    fun sendSideEffect(effect: MainEffect) = viewModelScope.launch {
+        _sideEffects.emit(effect)
     }
 
 }

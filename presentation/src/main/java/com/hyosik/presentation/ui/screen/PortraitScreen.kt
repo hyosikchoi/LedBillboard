@@ -14,15 +14,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
@@ -33,8 +36,10 @@ import com.hyosik.presentation.enum.ToastType
 import com.hyosik.presentation.extension.orZero
 import com.hyosik.presentation.extension.toast
 import com.hyosik.presentation.ui.component.BillBoard
+import com.hyosik.presentation.ui.intent.MainEffect
 import com.hyosik.presentation.ui.theme.buttonText
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun PotraitScreen(
@@ -44,6 +49,8 @@ fun PotraitScreen(
 ) {
 
     val context = LocalContext.current
+
+    val lifeCycleOwner = LocalLifecycleOwner.current
 
     val controller = rememberColorPickerController()
 
@@ -69,6 +76,18 @@ fun PotraitScreen(
         ), label = ""
     )
 
+    LaunchedEffect(Unit) {
+        lifeCycleOwner.lifecycleScope.launch {
+            viewModel.sideEffects.collect { sideEffect ->
+                when(sideEffect) {
+                    is MainEffect.Toast -> {
+                        context.toast(sideEffect.msg, ToastType.SHORT)
+                    }
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -92,6 +111,8 @@ fun PotraitScreen(
                     )
                 )
             }
+
+            //TODO 리컴포지션의 영향이 현재 value 에 매개변수로 cacheState 의 description 을 넘겨 주고 있어서 그렇다. 수정해야함.
             OutlinedTextField(
                 value = cacheState.data?.billboard?.description.orEmpty(),
                 onValueChange = { newText ->
@@ -104,6 +125,8 @@ fun PotraitScreen(
                                 )
                             )
                         }
+                    } else {
+                        viewModel.sendSideEffect(effect = MainEffect.Toast("최대 길이 입니다!"))
                     }
                 },
                 modifier = Modifier.fillMaxWidth(),
@@ -128,7 +151,7 @@ fun PotraitScreen(
                             )
                         }
                     }
-                    else context.toast("최대 사이즈 입니다.", ToastType.SHORT)
+                    else viewModel.sendSideEffect(effect = MainEffect.Toast("최대 사이즈 입니다!"))
                 }) {
                     Text(text = "+", textAlign = TextAlign.Center, fontSize = 25.sp)
                 }
@@ -150,7 +173,7 @@ fun PotraitScreen(
                         }
 
                     }
-                    else context.toast("최소 사이즈 입니다.", ToastType.SHORT)
+                    else viewModel.sendSideEffect(effect = MainEffect.Toast("최소 사이즈 입니다!"))
                 }) {
                     Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
                 }

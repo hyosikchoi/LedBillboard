@@ -1,9 +1,11 @@
 package com.hyosik.presentation.ui.intent
 
+import androidx.compose.runtime.Stable
 import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
 import com.hyosik.model.Direction
 
+@Stable
 sealed class MainEvent {
     open val billboard: Billboard = Billboard(
         key = BILLBOARD_KEY,
