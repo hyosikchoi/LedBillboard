@@ -40,7 +40,7 @@ import com.hyosik.presentation.ui.intent.MainEffect
 import com.hyosik.presentation.ui.theme.buttonText
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.launch
-
+//TODO viewModel 관련해서 Wrapping 하는 Composable 을 만들고 state 를 주입 하게끔 설계 변경
 @Composable
 fun PotraitScreen(
     viewModel: MainViewModel,
@@ -100,7 +100,8 @@ fun PotraitScreen(
                     .height(250.dp)
             ) {
                 BillBoard(
-                    text = cacheState.data?.billboard?.description.orEmpty(), fontSize = cacheState.data?.billboard?.fontSize.orZero(), textWidth = { textWidth ->
+                    text = cacheState.data?.billboard?.description.orEmpty(), fontSize = cacheState.data?.billboard?.fontSize.orZero(),
+                    textWidth = { textWidth ->
                         viewModel.setTextWidth(textWidth = textWidth)
                     },
                     textColor = cacheState.data!!.billboard.textColor,
