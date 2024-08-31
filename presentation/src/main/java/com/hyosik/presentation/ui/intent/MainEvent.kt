@@ -23,4 +23,12 @@ sealed class MainEvent {
     data class Edit(
         override val billboard: Billboard
     ) : MainEvent()
+
+    data class Save(
+        override val billboard: Billboard
+    ) : MainEvent()
+
+    data class SetTextWidth(
+        val textWidth: Int
+    ) : MainEvent()
 }

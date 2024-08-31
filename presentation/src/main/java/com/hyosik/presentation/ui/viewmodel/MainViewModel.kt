@@ -77,6 +77,15 @@ class MainViewModel @Inject constructor(
             is MainEvent.Edit -> {
                 UiState.success(current.data?.copy(billboard = event.billboard) as MainState)
             }
+
+            is MainEvent.Save -> {
+                viewModelScope.launch { postBillboardUseCase(billboard = event.billboard) }
+                UiState.success(current.data?.copy(billboard = event.billboard) as MainState)
+            }
+
+            is MainEvent.SetTextWidth -> {
+                UiState.success(current.data?.copy(billboard = current.data?.billboard?.copy(billboardTextWidth = event.textWidth) as Billboard) as MainState)
+            }
         }
     }
 
@@ -88,6 +97,10 @@ class MainViewModel @Inject constructor(
                     if(it.isInitialText.not()) events.send(MainEvent.Initial(billboard = billboard))
                 }
             }
+    }
+
+    fun onEvent(event: MainEvent) = viewModelScope.launch {
+        events.send(event)
     }
 
     fun saveBillboard(billboard: Billboard) = viewModelScope.launch {

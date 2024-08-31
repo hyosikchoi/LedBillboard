@@ -21,6 +21,7 @@ import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.hyosik.presentation.ui.theme.LedBillboardTheme
 import com.hyosik.presentation.ui.screen.LandScapeScreen
 import com.hyosik.presentation.ui.screen.PotraitScreen
+import com.hyosik.presentation.ui.screen.PotraitScreenRoot
 import com.hyosik.presentation.ui.theme.color.Black500
 import com.hyosik.presentation.ui.theme.myColorScheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,8 +85,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         else -> {
-                            PotraitScreen(
-                                viewModel = hiltViewModel(),
+                            PotraitScreenRoot(
                                 requestOrientationProvider = {
                                     requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                                 },
