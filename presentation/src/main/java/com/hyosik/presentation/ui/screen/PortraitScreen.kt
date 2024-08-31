@@ -27,6 +27,7 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.hyosik.core.ui.state.UiState
 import com.hyosik.model.BILLBOARD_KEY
+import com.hyosik.model.Billboard
 import com.hyosik.model.Direction
 import com.hyosik.presentation.extension.orZero
 import com.hyosik.presentation.ui.component.BillBoard
@@ -69,7 +70,6 @@ fun PotraitScreen(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         if(mainState.isSuccess) {
             Column(
                 modifier = Modifier
@@ -251,7 +251,11 @@ private fun getModifier(
 @Composable
 fun PotraitScreenPreview() {
     PotraitScreen(
-        mainState = UiState<MainState>(),
+        mainState = UiState<MainState>(
+            data = MainState(
+                billboard = Billboard()
+            )
+        ),
         requestOrientationProvider =  {},
         onColorChanged= {},
         onEvent = {},
