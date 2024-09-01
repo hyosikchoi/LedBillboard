@@ -53,7 +53,10 @@ class MainViewModel @Inject constructor(
         )
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Eagerly,
+            // 첫 번째 구독자가 나타나면 공유가 시작되고 마지막 구독자가 사라지면 즉시 중지됩니다.
+            // 앱이 키 누름이나 화면 터치와 같은 입력 이벤트에 5초 이내에 응답하지 않으면 ANR이 발생합니다
+            // 즉, 그 시점에서 UI를 더 이상 렌더링할 필요가 없거나 ANR이 이미 발생했을 수 있습니다.
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000),
             initialValue = UiState<MainState>(
                 data =  MainState (
                 billboard = Billboard()

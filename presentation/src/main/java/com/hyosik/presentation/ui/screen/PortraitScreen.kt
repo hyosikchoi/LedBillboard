@@ -36,7 +36,7 @@ import com.hyosik.presentation.ui.intent.MainEvent
 import com.hyosik.presentation.ui.intent.MainState
 import com.hyosik.presentation.ui.theme.buttonText
 
-//TODO viewModel 관련해서 Wrapping 하는 Composable 을 만들고 state 를 주입 하게끔 설계 변경
+
 @Composable
 fun PotraitScreen(
     mainState: UiState<MainState>,
