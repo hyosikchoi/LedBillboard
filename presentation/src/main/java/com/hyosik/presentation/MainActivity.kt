@@ -20,6 +20,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.hyosik.presentation.ui.theme.LedBillboardTheme
 import com.hyosik.presentation.ui.screen.LandScapeScreen
+import com.hyosik.presentation.ui.screen.LandScapeScreenRoot
 import com.hyosik.presentation.ui.screen.PotraitScreen
 import com.hyosik.presentation.ui.screen.PotraitScreenRoot
 import com.hyosik.presentation.ui.theme.color.Black500
@@ -79,9 +80,7 @@ class MainActivity : ComponentActivity() {
 
                     when (orientation) {
                         Configuration.ORIENTATION_LANDSCAPE -> {
-                            LandScapeScreen(
-                                viewModel = hiltViewModel()
-                            )
+                            LandScapeScreenRoot()
                         }
 
                         else -> {

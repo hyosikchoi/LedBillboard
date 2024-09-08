@@ -15,21 +15,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.hyosik.core.ui.state.UiState
+import com.hyosik.model.Billboard
 import com.hyosik.model.Direction
 import com.hyosik.presentation.extension.orZero
 import com.hyosik.presentation.ui.component.BillBoard
+import com.hyosik.presentation.ui.intent.MainEvent
+import com.hyosik.presentation.ui.intent.MainState
 import com.hyosik.presentation.ui.viewmodel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 
 @Composable
 fun LandScapeScreen(
-   viewModel: MainViewModel
+    mainState: UiState<MainState>,
+    onEvent: (MainEvent) -> Unit,
 ) {
-
-    // collectAsState vs collectAsStateWithLifecycle
-    // UI에서 라이프사이클을 인지하는 방식으로 flow를 수집할 수 있습니다.
-    val cacheState by viewModel.state.collectAsStateWithLifecycle()
 
     val infiniteTransition = rememberInfiniteTransition()
 
@@ -48,15 +50,15 @@ fun LandScapeScreen(
             .fillMaxSize()
     ) {
         BillBoard(
-            text = cacheState.data?.billboard?.description.orEmpty(),
-            fontSize = cacheState.data?.billboard?.fontSize.orZero(),
+            text = mainState.data?.billboard?.description.orEmpty(),
+            fontSize = mainState.data?.billboard?.fontSize.orZero(),
             textWidth = { textWidth ->
-            viewModel.setTextWidth(textWidth = textWidth)
+                onEvent(MainEvent.SetTextWidth(textWidth = textWidth))
         },
-            textColor = cacheState.data?.billboard?.textColor.orEmpty(),
+            textColor = mainState.data?.billboard?.textColor.orEmpty(),
             dynamicModifier = getModifier(
-                direction = cacheState.data?.billboard?.direction ?: Direction.STOP,
-                billboardTextWidth = cacheState.data?.billboard?.billboardTextWidth.orZero(),
+                direction = mainState.data?.billboard?.direction ?: Direction.STOP,
+                billboardTextWidth = mainState.data?.billboard?.billboardTextWidth.orZero(),
                 scrollProvider = {
                     scroll
                 }
@@ -95,5 +97,20 @@ private fun getModifier(
                 translationX = -billboardTextWidth * scrollProvider()
                 translationY = 0f
             }
+    }
+}
+
+
+@Preview
+@Composable
+fun LandScapeScreenPreview() {
+    LandScapeScreen(
+        mainState = UiState<MainState>(
+            data = MainState(
+                billboard = Billboard()
+            )
+        )
+    ) {
+
     }
 }
