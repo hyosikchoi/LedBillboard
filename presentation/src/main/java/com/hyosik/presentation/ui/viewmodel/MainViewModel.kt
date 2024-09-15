@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -63,7 +64,7 @@ class MainViewModel @Inject constructor(
             ))
         )
 
-    private val _sideEffects: MutableSharedFlow<MainEffect> = MutableSharedFlow<MainEffect>(replay = 0)
+    private val _sideEffects: MutableSharedFlow<MainEffect> = MutableSharedFlow()
 
     val sideEffects: SharedFlow<MainEffect> = _sideEffects.asSharedFlow()
 
@@ -94,11 +95,11 @@ class MainViewModel @Inject constructor(
 
     private fun getSaveBillboard() = viewModelScope.launch {
         getBillboardUseCase(BILLBOARD_KEY)
-//            .takeWhile { state.value.isInitialText }
-            .collectLatest { billboard ->
-                state.value.data?.let {
-                    if(it.isInitialText.not()) events.send(MainEvent.Initial(billboard = billboard))
-                }
+            // take 를 이용하여 처음 datastore 에 저장되어 있던 값만 수집하고 스트림을 종료시킨다.
+            // (이렇게 안하면 TextField 에서 수정해서 저장할 때마다 해당 스트림을 통해 이벤트를 발생 시키기 때문이다!)
+            .take(count = 1)
+            .collect { billboard ->
+                events.send(MainEvent.Initial(billboard = billboard))
             }
     }
 
