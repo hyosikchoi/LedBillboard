@@ -90,7 +90,6 @@ fun PotraitScreen(
                 )
             }
 
-            //TODO 리컴포지션의 영향이 현재 value 에 매개변수로 cacheState 의 description 을 넘겨 주고 있어서 그렇다. 수정해야함.
             OutlinedTextField(
                 value = mainState.data?.billboard?.description.orEmpty(),
                 onValueChange = { newText ->
@@ -223,10 +222,12 @@ private fun getModifier(
         Modifier
             .fillMaxWidth()
             .horizontalScroll(state = ScrollState(0), enabled = false)
-            .graphicsLayer(
-                translationX = (billboardTextWidth * scrollProvider()),
+            .graphicsLayer {
+                translationX = billboardTextWidth * scrollProvider()
                 translationY = 0f
-            )
+            }
+
+
     }
 
     Direction.STOP -> {
@@ -239,10 +240,10 @@ private fun getModifier(
         Modifier
             .fillMaxWidth()
             .horizontalScroll(state = ScrollState(0), enabled = false)
-            .graphicsLayer(
-                translationX = -billboardTextWidth * scrollProvider(),
+            .graphicsLayer {
+                translationX = -billboardTextWidth * scrollProvider()
                 translationY = 0f
-            )
+            }
     }
 }
 
