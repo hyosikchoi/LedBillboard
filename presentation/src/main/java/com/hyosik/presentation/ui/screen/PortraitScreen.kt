@@ -206,7 +206,7 @@ fun PotraitScreen(
                     .padding(10.dp),
                 controller = controller,
                 onColorChanged = { colorEnvelope: ColorEnvelope ->
-                    if(mainState.data?.isInitialText == true) onColorChanged(colorEnvelope)
+                     onColorChanged(colorEnvelope)
                 },
             )     
         }
