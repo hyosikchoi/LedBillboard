@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.shareIn
@@ -44,6 +45,7 @@ class MainViewModel @Inject constructor(
     //TODO presentation 모듈도 features 모듈로 변경하고 화면 별로 모듈을 나눈다.
     // theme 도 모듈로 나눈다.
     val state: StateFlow<UiState<MainState>> = events.receiveAsFlow()
+        .onStart { getSaveBillboard() }
         .runningFold(
             initial = UiState<MainState>(
                 data = MainState(
@@ -67,10 +69,6 @@ class MainViewModel @Inject constructor(
     private val _sideEffects: MutableSharedFlow<MainEffect> = MutableSharedFlow()
 
     val sideEffects: SharedFlow<MainEffect> = _sideEffects.asSharedFlow()
-
-    init {
-        getSaveBillboard()
-    }
 
     private fun reduceState(current: UiState<MainState>, event: MainEvent): UiState<MainState> {
         return when (event) {
