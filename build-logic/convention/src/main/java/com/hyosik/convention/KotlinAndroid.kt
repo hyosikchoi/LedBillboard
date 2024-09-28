@@ -1,4 +1,5 @@
 package com.example.ledbillboard
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
@@ -16,6 +17,9 @@ internal fun Project.configureKotlinAndroid(
 
             testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
             vectorDrawables.useSupportLibrary = true
+
+            if(this@apply is ApplicationExtension) (this@apply).defaultConfig.targetSdk = 34
+
         }
 
         compileOptions {
