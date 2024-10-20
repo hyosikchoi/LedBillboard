@@ -5,6 +5,6 @@ data class Billboard(
     val description: String = "",
     val fontSize: Int = 100,
     val direction: Direction = Direction.STOP,
-    val textColor: String = "FFFFFFFF",
+    val textColor: String? = null,
     val billboardTextWidth: Int = 1
 )

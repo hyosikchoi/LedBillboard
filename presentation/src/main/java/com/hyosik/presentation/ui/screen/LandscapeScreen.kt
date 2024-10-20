@@ -55,7 +55,7 @@ fun LandScapeScreen(
             textWidth = { textWidth ->
                 onEvent(MainEvent.SetTextWidth(textWidth = textWidth))
         },
-            textColor = mainState.data?.billboard?.textColor.orEmpty(),
+            textColor = mainState.data?.billboard?.textColor ?: "FFFFFF",
             dynamicModifier = getModifier(
                 direction = mainState.data?.billboard?.direction ?: Direction.STOP,
                 billboardTextWidth = mainState.data?.billboard?.billboardTextWidth.orZero(),

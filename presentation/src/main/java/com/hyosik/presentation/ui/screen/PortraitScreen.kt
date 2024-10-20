@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +36,7 @@ import com.hyosik.presentation.ui.intent.MainEffect
 import com.hyosik.presentation.ui.intent.MainEvent
 import com.hyosik.presentation.ui.intent.MainState
 import com.hyosik.presentation.ui.theme.buttonText
+import com.hyosik.utils.getColor
 
 
 @Composable
@@ -81,7 +83,7 @@ fun PotraitScreen(
                     textWidth = { textWidth ->
                         onEvent(MainEvent.SetTextWidth(textWidth = textWidth))
                     },
-                    textColor = mainState.data!!.billboard.textColor,
+                    textColor = mainState.data?.billboard?.textColor ?: "FFFFFF",
                     dynamicModifier = getModifier(
                         direction = mainState.data!!.billboard.direction,
                         billboardTextWidth = mainState.data!!.billboard.billboardTextWidth,
@@ -206,8 +208,9 @@ fun PotraitScreen(
                     .padding(10.dp),
                 controller = controller,
                 onColorChanged = { colorEnvelope: ColorEnvelope ->
-                     onColorChanged(colorEnvelope)
+                   onColorChanged(colorEnvelope)
                 },
+                initialColor = if(mainState.data?.billboard?.textColor != null) mainState.data?.billboard?.textColor?.getColor() else null
             )     
         }
     }

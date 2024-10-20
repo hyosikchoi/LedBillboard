@@ -90,13 +90,15 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onColorChanged = { colorEnvelope: ColorEnvelope ->
                                     if (isBackKeyPressed.not()) {
-                                        if (colorEnvelope.hexCode != mainViewModel.state.value.data?.billboard?.textColor) {
-                                            mainViewModel.state.value.data?.billboard?.let {
-                                                mainViewModel.saveBillboard(
-                                                    billboard = it.copy(
-                                                        textColor = colorEnvelope.hexCode
+                                        mainViewModel.state.value.data?.billboard?.let { billboard ->
+                                            billboard.textColor?.let {
+                                                if (colorEnvelope.hexCode != it) {
+                                                    mainViewModel.saveBillboard(
+                                                        billboard = billboard.copy(
+                                                            textColor = colorEnvelope.hexCode
+                                                        )
                                                     )
-                                                )
+                                                }
                                             }
                                         }
                                     } else {
