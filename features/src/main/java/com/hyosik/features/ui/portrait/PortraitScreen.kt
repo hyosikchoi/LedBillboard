@@ -113,7 +113,7 @@ fun PotraitScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(120.dp),
+                    .height(100.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -202,15 +202,17 @@ fun PotraitScreen(
 
             HsvColorPicker(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(350.dp)
-                    .padding(10.dp),
+                    .size(220.dp)
+                    .aspectRatio(1f / 1f),
                 controller = controller,
                 onColorChanged = { colorEnvelope: ColorEnvelope ->
                    onColorChanged(colorEnvelope)
                 },
                 initialColor = if(mainState.data?.billboard?.textColor != null) mainState.data?.billboard?.textColor?.getColor() else null
-            )     
+            )
+
+            //TODO 구글 애드몹 광고 넣기
+
         }
     }
 }
