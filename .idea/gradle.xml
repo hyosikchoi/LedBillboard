@@ -28,8 +28,8 @@
             <option value="$PROJECT_DIR$/core-android" />
             <option value="$PROJECT_DIR$/data" />
             <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/features" />
             <option value="$PROJECT_DIR$/model" />
-            <option value="$PROJECT_DIR$/presentation" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

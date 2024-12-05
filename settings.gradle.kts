@@ -22,7 +22,7 @@ rootProject.name = "LedBillboard"
 include (":app")
 include (":data")
 include (":domain")
-include (":presentation")
+include (":features")
 include (":model")
 include(":core")
 include(":core-android")
