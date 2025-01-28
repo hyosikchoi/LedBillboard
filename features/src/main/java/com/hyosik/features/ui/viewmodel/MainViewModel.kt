@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.runningFold
@@ -30,21 +31,6 @@ class MainViewModel @Inject constructor(
     private val getBillboardUseCase: GetBillboardUseCase,
     private val postBillboardUseCase: PostBillboardUseCase,
 ) : BaseViewModel<MainEvent, MainState, MainEffect>() {
-
-    //TODO presentation 모듈도 features 모듈로 변경하고 화면 별로 모듈을 나눈다.
-    // theme 도 모듈로 나눈다.
-    // baseviewModel 에서 onStart 에서 usecase 호출은 null object 로 참조 된다. hilt 쪽 봐야할듯..
-    init {
-        viewModelScope.launch {
-            getBillboardUseCase(BILLBOARD_KEY)
-                // take 를 이용하여 처음 datastore 에 저장되어 있던 값만 수집하고 스트림을 종료시킨다.
-                // (이렇게 안하면 TextField 에서 수정해서 저장할 때마다 해당 스트림을 통해 이벤트를 발생 시키기 때문이다!)
-                .take(count = 1)
-                .collect { billboard ->
-                    setEvent(MainEvent.Initial(billboard = billboard))
-                }
-        }
-    }
 
     override fun setInitialState(): UiState<MainState> =
         UiState(
@@ -74,8 +60,29 @@ class MainViewModel @Inject constructor(
             is MainEvent.SetTextWidth -> {
                 UiState.success(currentState.data?.copy(billboard = currentState.data?.billboard?.copy(billboardTextWidth = event.textWidth) as Billboard) as MainState)
             }
+
         }
     }
+
+    //TODO presentation 모듈도 features 모듈로 변경하고 화면 별로 모듈을 나눈다.
+    // theme 도 모듈로 나눈다.
+    // baseviewModel 에서 onStart 에서 usecase 호출은 null object 로 참조 된다. hilt 쪽 봐야할듯..
+    // init 에서 호출 하게 되면 단위 테스트 시 이 init 함수는 계속 걸고 넘어지게 된다.
+    override val state: StateFlow<UiState<MainState>> = events.receiveAsFlow()
+        .onStart {
+            getBillboardUseCase(BILLBOARD_KEY)
+                // take 를 이용하여 처음 datastore 에 저장되어 있던 값만 수집하고 스트림을 종료시킨다.
+                // (이렇게 안하면 TextField 에서 수정해서 저장할 때마다 해당 스트림을 통해 이벤트를 발생 시키기 때문이다!)
+                .take(count = 1)
+                .collect { billboard ->
+                    setEvent(MainEvent.Initial(billboard = billboard))
+                }
+        }
+        .runningFold(
+            initial = initialUiState,
+            operation = ::reduceState
+        ).stateIn(viewModelScope, SharingStarted.Eagerly, initialUiState)
+
 
     fun saveBillboard(billboard: Billboard) = viewModelScope.launch {
         setEvent(MainEvent.Edit(billboard = billboard))
