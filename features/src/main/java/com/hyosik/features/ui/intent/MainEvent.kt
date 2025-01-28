@@ -6,7 +6,7 @@ import com.hyosik.model.Billboard
 import com.hyosik.model.Direction
 
 @Stable
-sealed class MainEvent {
+sealed class MainEvent : Event {
     open val billboard: Billboard = Billboard(
         key = BILLBOARD_KEY,
         description = "",

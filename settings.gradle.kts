@@ -19,10 +19,12 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "LedBillboard"
-include (":app")
+include(":app")
 include (":data")
 include (":domain")
 include (":features")
 include (":model")
 include(":core")
 include(":core-android")
+
+

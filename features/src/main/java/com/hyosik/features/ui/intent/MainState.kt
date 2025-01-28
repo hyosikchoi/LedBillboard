@@ -7,4 +7,4 @@ import com.hyosik.model.Billboard
 data class MainState(
     val isInitialText: Boolean = false,
     val billboard: Billboard,
-)
+) : State

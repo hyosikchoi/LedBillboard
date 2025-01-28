@@ -31,7 +31,7 @@ fun PotraitScreenRoot(
 
     LaunchedEffect(Unit) {
         lifeCycleOwner.lifecycleScope.launch {
-            mainViewModel.sideEffects.collect { sideEffect ->
+            mainViewModel.effects.collect { sideEffect ->
                 when (sideEffect) {
                     is MainEffect.Toast -> {
                         context.toast(sideEffect.msg, ToastType.SHORT)
@@ -47,8 +47,8 @@ fun PotraitScreenRoot(
         onColorChanged = { colorEnvelope: ColorEnvelope ->
           if(state.data?.isInitialText == true) onColorChanged(colorEnvelope)
         },
-        onEvent = mainViewModel::onEvent,
-        onSideEffect = mainViewModel::sendSideEffect
+        onEvent = mainViewModel::setEvent,
+        onSideEffect = mainViewModel::setEffect
     )
 
 

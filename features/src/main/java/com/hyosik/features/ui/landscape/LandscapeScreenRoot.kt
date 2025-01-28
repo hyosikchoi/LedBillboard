@@ -17,7 +17,7 @@ fun LandScapeScreenRoot() {
 
     LandScapeScreen(
         mainState = state,
-        onEvent = mainViewModel::onEvent
+        onEvent = mainViewModel::setEvent
     )
 
 }
