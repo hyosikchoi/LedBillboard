@@ -2,6 +2,7 @@ package com.hyosik.features.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.hyosik.common.BaseViewModel
+import com.hyosik.core.exception
 import com.hyosik.core.ui.state.UiState
 import com.hyosik.domain.usecase.GetBillboardUseCase
 import com.hyosik.domain.usecase.PostBillboardUseCase
@@ -75,7 +76,12 @@ class MainViewModel @Inject constructor(
         .runningFold(
             initial = initialUiState,
             operation = ::reduceState
-        ).stateIn(viewModelScope, SharingStarted.Eagerly, initialUiState)
+        )
+        .exception(
+            tryRetry = true,
+            retryCount = 3
+        )
+        .stateIn(viewModelScope, SharingStarted.Eagerly, initialUiState)
 
 
     fun saveBillboard(billboard: Billboard) = viewModelScope.launch {
