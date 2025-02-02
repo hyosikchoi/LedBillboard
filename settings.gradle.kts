@@ -26,5 +26,4 @@ include (":features")
 include (":model")
 include(":core")
 include(":core-android")
-
-
+include(":features:common")

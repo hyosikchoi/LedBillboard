@@ -1,43 +1,18 @@
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    id("hyosik.plugin.library")
+    id("hyosik.plugin.library.compose")
 }
 
 android {
-    namespace = "com.hyosik.common"
-    compileSdk = 34
-
-    defaultConfig {
-        minSdk = 26
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
-    }
+    namespace = "com.example.ledbillboard.features.common"
 }
 
 dependencies {
 
-    implementation(libs.androidX.core.ktx)
-    implementation(libs.androidX.appcompat)
-    implementation(libs.material)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidX.test.junit)
-    androidTestImplementation(libs.androidX.test.espresso)
+    implementation (project(":model"))
+    implementation (project(":core"))
+
+    implementation (libs.androidX.core.ktx)
+    implementation (libs.androidX.lifecycle.runtimeTesting)
+    implementation (libs.androidX.activity.compose)
 }

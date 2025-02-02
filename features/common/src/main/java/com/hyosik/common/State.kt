@@ -1,3 +1,3 @@
-package com.hyosik.features.ui.intent
+package com.hyosik.common
 
 interface State {}

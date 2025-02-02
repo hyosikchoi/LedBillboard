@@ -14,6 +14,7 @@ dependencies {
     implementation (project(":domain"))
     implementation (project(":core"))
     implementation(project(":core-android"))
+    implementation(project(":features:common"))
 
     implementation (libs.androidX.core.ktx)
     implementation (libs.androidX.lifecycle.runtimeTesting)

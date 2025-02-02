@@ -1,6 +1,7 @@
 package com.hyosik.features.ui.intent
 
 import androidx.compose.runtime.Stable
+import com.hyosik.common.Event
 import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
 import com.hyosik.model.Direction

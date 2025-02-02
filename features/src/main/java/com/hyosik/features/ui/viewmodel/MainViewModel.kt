@@ -1,7 +1,7 @@
 package com.hyosik.features.ui.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hyosik.common.BaseViewModel
 import com.hyosik.core.ui.state.UiState
 import com.hyosik.domain.usecase.GetBillboardUseCase
 import com.hyosik.domain.usecase.PostBillboardUseCase
@@ -11,13 +11,8 @@ import com.hyosik.features.ui.intent.MainEffect
 import com.hyosik.features.ui.intent.MainEvent
 import com.hyosik.features.ui.intent.MainState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.runningFold
@@ -66,7 +61,6 @@ class MainViewModel @Inject constructor(
 
     //TODO presentation 모듈도 features 모듈로 변경하고 화면 별로 모듈을 나눈다.
     // theme 도 모듈로 나눈다.
-    // baseviewModel 에서 onStart 에서 usecase 호출은 null object 로 참조 된다. hilt 쪽 봐야할듯..
     // init 에서 호출 하게 되면 단위 테스트 시 이 init 함수는 계속 걸고 넘어지게 된다.
     override val state: StateFlow<UiState<MainState>> = events.receiveAsFlow()
         .onStart {

@@ -1,11 +1,8 @@
-package com.hyosik.features.ui.viewmodel
+package com.hyosik.common
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hyosik.core.ui.state.UiState
-import com.hyosik.features.ui.intent.Effect
-import com.hyosik.features.ui.intent.Event
-import com.hyosik.features.ui.intent.State
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
