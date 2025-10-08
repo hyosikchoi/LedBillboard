@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.hyosik.common.PrimaryButton
 import com.hyosik.core.ui.state.UiState
 import com.hyosik.model.BILLBOARD_KEY
 import com.hyosik.model.Billboard
@@ -34,7 +35,7 @@ import com.hyosik.features.ui.component.BillBoard
 import com.hyosik.features.ui.intent.MainEffect
 import com.hyosik.features.ui.intent.MainEvent
 import com.hyosik.features.ui.intent.MainState
-import com.hyosik.features.ui.theme.buttonText
+import com.hyosik.theme.buttonText
 import com.hyosik.utils.getColor
 
 
@@ -71,14 +72,15 @@ fun PotraitScreen(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if(mainState.isSuccess) {
+        if (mainState.isSuccess) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp)
             ) {
                 BillBoard(
-                    text = mainState.data?.billboard?.description.orEmpty(), fontSize = mainState.data?.billboard?.fontSize.orZero(),
+                    text = mainState.data?.billboard?.description.orEmpty(),
+                    fontSize = mainState.data?.billboard?.fontSize.orZero(),
                     textWidth = { textWidth ->
                         onEvent(MainEvent.SetTextWidth(textWidth = textWidth))
                     },
@@ -97,10 +99,14 @@ fun PotraitScreen(
                 onValueChange = { newText ->
                     if (newText.length <= maxChar) {
                         mainState.data?.billboard?.let {
-                            onEvent(MainEvent.Save(it.copy(
-                                key = BILLBOARD_KEY,
-                                description = newText,
-                            )))
+                            onEvent(
+                                MainEvent.Save(
+                                    it.copy(
+                                        key = BILLBOARD_KEY,
+                                        description = newText,
+                                    )
+                                )
+                            )
                         }
                     } else {
                         onSideEffect(MainEffect.Toast("최대 길이 입니다!"))
@@ -118,42 +124,54 @@ fun PotraitScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(onClick = {
-                    if (mainState.data?.billboard?.fontSize.orZero() <= maxFontSize) {
-                        mainState.data?.billboard?.let {
-                            onEvent(MainEvent.Save(
-                                it.copy(
-                                    fontSize = it.fontSize + 2
+                PrimaryButton(
+                    onClick = {
+                        if (mainState.data?.billboard?.fontSize.orZero() <= maxFontSize) {
+                            mainState.data?.billboard?.let {
+                                onEvent(
+                                    MainEvent.Save(
+                                        it.copy(
+                                            fontSize = it.fontSize + 2
+                                        )
+                                    )
                                 )
-                            ))
-                        }
-                    }
-                    else onSideEffect(MainEffect.Toast("최대 사이즈 입니다!"))
-                }) {
-                    Text(text = "+", textAlign = TextAlign.Center, fontSize = 25.sp)
-                }
+                            }
+                        } else onSideEffect(MainEffect.Toast("최대 사이즈 입니다!"))
+                    },
+                    buttonText = "+",
+                    buttonFontSize = 25.sp
+                )
 
-                Button(onClick = {
-                    requestOrientationProvider()
-                }) {
-                    Text(text = "START", textAlign = TextAlign.Center, fontSize = 25.sp)
-                }
 
-                Button(onClick = {
-                    if (mainState.data?.billboard?.fontSize.orZero() >= minFontSize){
-                        mainState.data?.billboard?.let {
-                            onEvent(MainEvent.Save(
-                                it.copy(
-                                    fontSize = it.fontSize - 2
+                PrimaryButton(
+                    modifier = Modifier.width(150.dp),
+                    onClick = {
+                        requestOrientationProvider()
+                    },
+                    buttonText = "START",
+                    buttonFontSize = 25.sp
+                )
+
+
+                PrimaryButton(
+                    onClick = {
+                        if (mainState.data?.billboard?.fontSize.orZero() >= minFontSize) {
+                            mainState.data?.billboard?.let {
+                                onEvent(
+                                    MainEvent.Save(
+                                        it.copy(
+                                            fontSize = it.fontSize - 2
+                                        )
+                                    )
                                 )
-                            ))
-                        }
+                            }
 
-                    }
-                    else onSideEffect(MainEffect.Toast("최소 사이즈 입니다!"))
-                }) {
-                    Text(text = "-", textAlign = TextAlign.Center, fontSize = 25.sp)
-                }
+                        } else onSideEffect(MainEffect.Toast("최소 사이즈 입니다!"))
+                    },
+                    buttonText = "-",
+                    buttonFontSize = 25.sp
+                )
+
             }
 
             Row(
@@ -163,42 +181,54 @@ fun PotraitScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Button(onClick = {
-                    mainState.data?.billboard?.let {
-                        onEvent(MainEvent.Save(
-                            it.copy(
-                                direction = Direction.LEFT
-                            )
-                        ))
-                    }
-
-                }) {
-                    Text(text = "←", textAlign = TextAlign.Center, fontSize = 25.sp)
-                }
-                Button(onClick = {
-                    mainState.data?.billboard?.let {
-                        onEvent(
-                            MainEvent.Save(
-                                it.copy(
-                                    direction = Direction.STOP
+                PrimaryButton(
+                    onClick = {
+                        mainState.data?.billboard?.let {
+                            onEvent(
+                                MainEvent.Save(
+                                    it.copy(
+                                        direction = Direction.LEFT
+                                    )
                                 )
                             )
-                        )
-                    }
-                }) {
-                    Text(text = "STOP", textAlign = TextAlign.Center, fontSize = 25.sp)
-                }
-                Button(onClick = {
-                    mainState.data?.billboard?.let {
-                        onEvent(MainEvent.Save(
-                            it.copy(
-                                direction = Direction.RIGHT
+                        }
+                    },
+                    buttonText = "L",
+                    buttonFontSize = 25.sp,
+                )
+
+
+                PrimaryButton(
+                    modifier = Modifier.width(150.dp),
+                    onClick = {
+                        mainState.data?.billboard?.let {
+                            onEvent(
+                                MainEvent.Save(
+                                    it.copy(
+                                        direction = Direction.STOP
+                                    )
+                                )
                             )
-                        ))
-                    }
-                }) {
-                    Text(text = "→", textAlign = TextAlign.Center, fontSize = 25.sp)
-                }
+                        }
+                    },
+                    buttonText = "STOP",
+                    buttonFontSize = 25.sp
+                )
+                PrimaryButton(
+                    onClick = {
+                        mainState.data?.billboard?.let {
+                            onEvent(
+                                MainEvent.Save(
+                                    it.copy(
+                                        direction = Direction.RIGHT
+                                    )
+                                )
+                            )
+                        }
+                    },
+                    buttonText = "R",
+                    buttonFontSize = 25.sp
+                )
             }
 
             HsvColorPicker(
@@ -207,9 +237,9 @@ fun PotraitScreen(
                     .aspectRatio(1f / 1f),
                 controller = controller,
                 onColorChanged = { colorEnvelope: ColorEnvelope ->
-                   onColorChanged(colorEnvelope)
+                    onColorChanged(colorEnvelope)
                 },
-                initialColor = if(mainState.data?.billboard?.textColor != null) mainState.data?.billboard?.textColor?.getColor() else null
+                initialColor = if (mainState.data?.billboard?.textColor != null) mainState.data?.billboard?.textColor?.getColor() else null
             )
 
             //TODO 구글 애드몹 광고 넣기
@@ -262,8 +292,8 @@ fun PotraitScreenPreview() {
                 billboard = Billboard()
             )
         ),
-        requestOrientationProvider =  {},
-        onColorChanged= {},
+        requestOrientationProvider = {},
+        onColorChanged = {},
         onEvent = {},
         onSideEffect = {}
     )

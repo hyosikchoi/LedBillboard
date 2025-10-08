@@ -1,4 +1,4 @@
-package com.hyosik.features.ui.theme
+package com.hyosik.theme
 
 
 import androidx.compose.material3.Typography
@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.example.ledbillboard.presentation.R
+import com.example.ledbillboard.features.common.R
 
 
 private val spoqaRegular = FontFamily(

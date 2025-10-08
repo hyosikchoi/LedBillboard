@@ -1,4 +1,4 @@
-package com.hyosik.features.ui.theme.color
+package com.hyosik.theme.color
 
 import android.graphics.Color.parseColor
 import androidx.compose.material3.darkColorScheme
@@ -27,8 +27,8 @@ sealed class ColorSet {
     object LightColorSet: ColorSet() {
         override var myColors = MyColors(
             material = lightColorScheme(
-                primary = Purple500,
-                primaryContainer = Purple700,
+                primary = Purple200,
+                primaryContainer = Purple500,
                 secondary = Teal200,
             ),
             text1 = Black200
@@ -39,7 +39,7 @@ sealed class ColorSet {
         override var myColors = MyColors(
             material = darkColorScheme(
                 primary = Purple200,
-                primaryContainer = Purple200,
+                primaryContainer = Purple500,
                 secondary = Teal200,
             ),
             text1 = White200

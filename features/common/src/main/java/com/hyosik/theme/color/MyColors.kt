@@ -1,4 +1,4 @@
-package com.hyosik.features.ui.theme.color
+package com.hyosik.theme.color
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 
@@ -10,12 +10,13 @@ data class MyColors(
     val checked: Color = Color.White,
     val unchecked: Color = Color.White,
     val checkmark: Color = material.primary,
+    val disabledPrimary: Color = material.primary.copy(alpha = 0.3f),
     val disabledSecondary: Color = material.secondary.copy(alpha = 0.5f),
     val textFiledBackground: Color = Color.LightGray,
     val textFiledBackgroundVariant: Color = Color.DarkGray,
     val launcherScreenBackground: Color = material.primary,
     val progressItemColor: Color = Color.Black,
-    val text1: Color
+    val text1: Color,
 ) {
     val primary: Color get() = material.primary
     val primaryVariant: Color get() = material.primaryContainer

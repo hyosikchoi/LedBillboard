@@ -1,4 +1,4 @@
-package com.hyosik.features.ui.theme
+package com.hyosik.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Shapes

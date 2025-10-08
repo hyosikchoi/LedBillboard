@@ -1,4 +1,4 @@
-package com.hyosik.features.ui.theme
+package com.hyosik.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.hyosik.features.ui.theme.color.ColorSet
-import com.hyosik.features.ui.theme.color.MyColors
+import com.hyosik.theme.color.ColorSet
+import com.hyosik.theme.color.MyColors
 
 private val LocalColors = staticCompositionLocalOf { ColorSet.DarkColorSet.myColors } // 초기값 설정
 

@@ -16,11 +16,11 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.view.WindowCompat
 import com.github.skydoves.colorpicker.compose.ColorEnvelope
-import com.hyosik.features.ui.theme.LedBillboardTheme
+import com.hyosik.theme.LedBillboardTheme
 import com.hyosik.features.ui.landscape.LandScapeScreenRoot
 import com.hyosik.features.ui.portrait.PotraitScreenRoot
-import com.hyosik.features.ui.theme.color.Black500
-import com.hyosik.features.ui.theme.myColorScheme
+import com.hyosik.theme.color.Black500
+import com.hyosik.theme.myColorScheme
 import dagger.hilt.android.AndroidEntryPoint
 import com.hyosik.features.ui.viewmodel.MainViewModel
 
