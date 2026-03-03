@@ -16,4 +16,8 @@ dependencies {
     implementation (libs.androidX.core.ktx)
     implementation (libs.androidX.lifecycle.runtimeTesting)
     implementation (libs.androidX.activity.compose)
+
+    androidTestImplementation (libs.androidX.test.junit)
+    androidTestImplementation (libs.androidX.compose.uiTestJunit)
+    debugImplementation (libs.androidX.compose.uiTestManifest)
 }
