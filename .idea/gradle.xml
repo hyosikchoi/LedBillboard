@@ -34,7 +34,6 @@
             <option value="$PROJECT_DIR$/model" />
           </set>
         </option>
-        <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
   </component>
