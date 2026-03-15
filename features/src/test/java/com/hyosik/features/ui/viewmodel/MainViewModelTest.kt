@@ -14,6 +14,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -30,7 +31,7 @@ import org.junit.runner.Description
 // @MX:NOTE: MainDispatcherRule - Dispatchers.Main 을 테스트용 UnconfinedTestDispatcher 로 교체
 @OptIn(ExperimentalCoroutinesApi::class)
 class MainDispatcherRule(
-    private val testDispatcher: UnconfinedTestDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()
 ) : TestWatcher() {
     override fun starting(description: Description) {
         Dispatchers.setMain(testDispatcher)
