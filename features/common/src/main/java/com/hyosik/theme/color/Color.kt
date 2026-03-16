@@ -6,6 +6,16 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 val White200 = Color(parseColor("#FFFFFF"))
+
+// LedBillboard Redesign Dark Theme Colors
+val DarkBackground = Color(0xFF0D0D1A)       // 전체 배경
+val DarkSurface = Color(0xFF1A1A2E)          // Billboard 배경
+val DarkCard = Color(0xFF16213E)             // 카드/입력 배경
+val NeonPurple = Color(0xFFBB86FC)           // 네온 보라 (START, 포인트)
+val NeonPurpleLight = Color(0xFFD0AAFF)      // 네온 보라 밝게
+val NeonRed = Color(0xFFFF4444)              // STOP 버튼 빨간
+val OutlineGray = Color(0xFF3A3A5C)          // 버튼/입력 테두리
+val TextHint = Color(0xFF6B6B8A)             // 힌트 텍스트
 val Purple200 = Color(0xFFBB86FC)
 val Purple500 = Color(0xFF6200EE)
 val Purple700 = Color(0xFF3700B3)
